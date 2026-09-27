@@ -92,9 +92,13 @@ text(":moon :sun :water :fire :heart :mercury").size(100).out()
 
 Font family:
 
+By default, Textual uses the platform's sans-serif font. You can pick a specific font with `.font()`:
+
 ```js
 text('Textual').font('wingdings').out();
 ```
+
+When a font is not specified, zalgo text uses Helvetica (with Arial and sans-serif as fallbacks). If you set a font explicitly, zalgo will use it, even if the marks don't render well.
 
 Rotation:
 
@@ -126,6 +130,19 @@ text("textual").shadow(4, 4, 8, "purple").out()
 
 Shadows are expensive on the 2D canvas, especially with large fonts.
 Use them sparingly in live performances.
+
+Zalgo:
+
+Adds combining diacritical marks to the text, for a glitchy or chaotic look. The optional arguments are the average number of marks per character (default 5), and the random seed:
+
+```js
+text("textual").zalgo().out()                // seed 0, always the same result
+text("textual").zalgo(5, 1).out()            // another variant
+text("textual").zalgo(20).out()              // more marks
+```
+
+Because the marks are random, the text changes every frame. If you want
+a stable effect, this is not the right tool.
 
 ## Oscillators
 

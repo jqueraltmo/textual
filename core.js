@@ -1,6 +1,7 @@
 "use strict";
 
 import { expandEmojis } from "./emoji.js";
+import { zalgo } from "./zalgo.js";
 
 /**
  * A text node with style properties and a dispatch callback.
@@ -14,7 +15,7 @@ export class TextNode {
         // Style defaults. Users can override these properties directly.
         this.fontSize = 48;
         this.lineHeightMultiplier = 1.3;
-        this.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        this.fontFamily = null;
         this.fontWeight = "700";
         this.align = "center";
         this.baseline = "middle";
@@ -29,6 +30,8 @@ export class TextNode {
         this.x = 0;
         this.y = 0;
         this.rotation = 0;
+        this.zalgoIntensity = 0;
+        this.zalgoSeed = 0;
     }
 
     /**
@@ -86,6 +89,12 @@ export class TextNode {
         this.shadowOffsetY = y;
         this.shadowBlur = blur;
         this.shadowColor = color;
+        return this;
+    }
+
+    zalgo(intensity = 5, seed = 0) {
+        this.zalgoIntensity = intensity;
+        this.zalgoSeed = seed;
         return this;
     }
 }
@@ -147,12 +156,15 @@ export function run(compiled, time, tempo) {
 }
 
 /**
- * Resolves a node's content to a plain string, applying emoji expansion.
+ * Resolves a node's content to a plain string, applying emoji/zalgo expansion.
  * Handles both static strings and dynamic functions.
  */
 export function resolveText(node) {
     const raw = typeof node.content === "function" ? node.content() : node.content;
-    const text = raw === undefined || raw === null ? "" : String(raw);
-    if (text.indexOf(":") === -1) return text;
-    return expandEmojis(text);
+    let text = raw === undefined || raw === null ? "" : String(raw);
+
+    if (text.indexOf(":") !== -1) text = expandEmojis(text);
+    if (node.zalgoIntensity > 0) text = zalgo(text, node.zalgoIntensity);
+
+    return text;
 }

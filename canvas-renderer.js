@@ -137,8 +137,8 @@ export class CanvasRenderer {
         ctx.save();
         ctx.translate(centerX, centerY);
         ctx.rotate(node.rotation || 0);
+        ctx.font = this._resolveFont(node, fontSize);
 
-        ctx.font = `${node.fontWeight} ${fontSize}px ${node.fontFamily}`;
         ctx.textAlign = node.align;
         ctx.textBaseline = node.baseline;
 
@@ -170,5 +170,20 @@ export class CanvasRenderer {
         }
 
         ctx.restore();
+    }
+
+    _resolveFont(node, fontSize) {
+        // The user chose a font explicitly: respect it, even for zalgo.
+        if (node.fontFamily !== null) {
+            return `${node.fontWeight} ${fontSize}px ${node.fontFamily}`;
+        }
+        // Zalgo needs a font without combining marks so the browser uses
+        // its own fallback positioning, which handles stacked marks better
+        // than any single font we tried.
+        if (node.zalgoIntensity > 0) {
+            return `${fontSize}px Helvetica, Arial, sans-serif`;
+        }
+        // Default: platform sans-serif.
+        return `${node.fontWeight} ${fontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
     }
 }
