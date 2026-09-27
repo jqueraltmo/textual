@@ -111,7 +111,7 @@ function normalizeContent(content) {
 export function compile(code) {
     return new Function(
         "text", "fb", "time", "cps", "beat",
-        "osc", "phasor", "tri", "saw", "sqr",
+        "osc", "phasor", "tri", "saw", "sqr", "seq",
         `"use strict";\n${code}`
     );
 }
@@ -150,7 +150,35 @@ export function run(compiled, time, tempo) {
     const saw = (freq = 1) => phasor(freq) * 2 - 1;
     const sqr = (freq = 1) => (phasor(freq) < 0.5 ? -1 : 1);
 
-    compiled(text, fb, time, cps, beat, osc, phasor, tri, saw, sqr);
+    const seq = (...args) => {
+        const values = (args.length === 1 && Array.isArray(args[0])) ? args[0] : args;
+        const state = { values, speed: 1, offset: 0, smooth: false };
+
+        function evaluate() {
+            const n = values.length;
+            if (n === 0) return 0;
+            const pos = beat * state.speed * n + state.offset;
+            const norm = ((pos % n) + n) % n;
+            const i = Math.floor(norm);
+            if (!state.smooth) return values[i];
+            const frac = norm - i;
+            const a = values[i];
+            const b = values[(i + 1) % n];
+            return a + (b - a) * frac;
+        }
+
+        const api = {
+            fast(k = 2) { state.speed *= k; return api; },
+            slow(k = 2) { state.speed /= k; return api; },
+            offset(k = 1) { state.offset += k; return api; },
+            smooth(on = true) { state.smooth = on; return api; },
+            valueOf() { return evaluate(); },
+            toString() { return String(evaluate()); },
+        };
+        return api;
+    }
+
+    compiled(text, fb, time, cps, beat, osc, phasor, tri, saw, sqr, seq);
 
     return { outputs, feedback };
 }
@@ -164,7 +192,7 @@ export function resolveText(node) {
     let text = raw === undefined || raw === null ? "" : String(raw);
 
     if (text.indexOf(":") !== -1) text = expandEmojis(text);
-    if (node.zalgoIntensity > 0) text = zalgo(text, node.zalgoIntensity);
+    if (node.zalgoIntensity > 0) text = zalgo(text, node.zalgoIntensity, node.zalgoSeed);
 
     return text;
 }

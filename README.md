@@ -165,6 +165,31 @@ text(":moon").spin(saw(-0.5)).size(500).out()
 fb(.9)
 ```
 
+## Sequences
+
+`seq(1, 2, 3)` cycles through the given values, one full pass per cycle, synchronized with Estuary's tempo.
+
+```js
+text("textual").move(seq(-0.5, 0, 0.5), 0).out()
+```
+
+Modifiers can be chained:
+
+```js
+seq(1, 2, 3).fast(2)          // two passes per cycle
+seq(1, 2, 3).slow(2)          // half a pass per cycle
+seq(1, 2, 3).offset(1)        // start from the second value
+seq(1, 2, 3).smooth()         // interpolate instead of stepping
+seq(1, 2, 3).fast(2).smooth() // combined
+```
+
+The array form `seq([1, 2, 3])` is also accepted, useful when the values come from a variable:
+
+```js
+const vals = [50, 100, 200];
+text(":heart").size(seq(vals).smooth()).out()
+```
+
 ## Using Textual alongside with Punctual
 
 In Estuary, use two cells, one for Punctual and one for Textual.
