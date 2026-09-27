@@ -15,7 +15,7 @@ npx serve --cors
 ```
 
 ```js
-!exolang "textual" "https://textual.savamala.top/exolang.js";
+!exolang "textual" "https://textual.savamala.top/exolang.js"
 ```
 
 Tell Estuary that you are using Textual by starting your code with this line:
