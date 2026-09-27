@@ -55,8 +55,9 @@ export class TextNode {
     }
 
     color(r = 1, g = 1, b = 1, a = 1) {
-        const c = typeof r === "string"
-            ? r
+        const rv = r.valueOf();
+        const c = typeof rv === "string"
+            ? rv
             : `rgba(${r * 255}, ${g * 255}, ${b * 255}, ${a})`;
         this.fillColor = c;
         this.strokeColor = c;
