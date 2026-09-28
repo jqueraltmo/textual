@@ -109,6 +109,25 @@ text("textual").spin(time/4%2).out()
 
 In `spin()` 1 is PI radiants.
 
+Zoom:
+
+```js
+text('textual').zoom(3,8).out()
+text('textual').zoom(seq(1,10).smooth(),1).out()
+```
+
+Arbitrary transformations:
+
+Apply any transformation you like by directly accessing the canvas context and calling its native methods:
+
+```js
+text('textual').stroke(1).size(100).transform(ctx=>{
+  ctx.rotate((time/3)%2*Math.PI);
+  ctx.translate(seq(0,300).slow(12.31).smooth(),4);
+  ctx.rotate((time/4)%2*Math.PI);
+}).out()
+```
+
 Stroke:
 
 By default, text is filled. Use `.stroke()` to render it as an outline:
