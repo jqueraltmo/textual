@@ -141,9 +141,6 @@ text("textual").zalgo(5, 1).out()            // another variant
 text("textual").zalgo(20).out()              // more marks
 ```
 
-Because the marks are random, the text changes every frame. If you want
-a stable effect, this is not the right tool.
-
 ## Oscillators
 
 All oscillators take a frequency in Hz. To synchronize with the tempo, pass `cps`:
