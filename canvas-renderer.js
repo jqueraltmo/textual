@@ -107,7 +107,7 @@ export class CanvasRenderer {
      * @param {TextNode[]} nodes
      * @param {{ brightness?: number, target?: string }} [options]
      */
-    draw(nodes, { brightness = 1, target = "canvas" } = {}) {
+    draw(nodes, { brightness = 1, target = "" } = {}) {
         const t = this._target(target);
         if (!t) return;
 
@@ -117,14 +117,43 @@ export class CanvasRenderer {
         const height = canvas.height / dpr;
 
         ctx.save();
-        ctx.scale(dpr, dpr);
-        ctx.globalAlpha = brightness;
-
-        for (const node of nodes) {
-            this._drawNode(node, width, height, ctx);
+        try {
+            ctx.scale(dpr, dpr);
+            ctx.globalAlpha = brightness;
+            for (const node of nodes) {
+                this._drawNode(node, width, height, ctx);
+            }
+        } finally {
+            ctx.restore();
         }
+    }
 
-        ctx.restore();
+    /**
+    * Executes user-supplied code paths (resolveText, customTransform) in
+    * an isolated context. Throws if anything fails, so the caller can
+    * decide to skip the frame before touching the real canvas.
+    */
+    dryRun(nodes) {
+        if (!this._testCtx) {
+            const c = document.createElement("canvas");
+            c.width = 1;
+            c.height = 1;
+            this._testCtx = c.getContext("2d");
+        }
+        const ctx = this._testCtx;
+        for (const node of nodes) {
+            resolveText(node);
+            if (node.customTransform) {
+                ctx.save();
+                try {
+                    ctx.rotate(node.rotation || 0);
+                    ctx.scale(node.zoomx, node.zoomy);
+                    node.customTransform(ctx);
+                } finally {
+                    ctx.restore();
+                }
+            }
+        }
     }
 
     _drawNode(node, width, height, ctx) {
@@ -135,41 +164,46 @@ export class CanvasRenderer {
         const centerY = ((1 - node.y) / 2) * height;
 
         ctx.save();
-        ctx.translate(centerX, centerY);
-        ctx.rotate(node.rotation || 0);
-        ctx.font = this._resolveFont(node, fontSize);
+        try {
+            ctx.translate(centerX, centerY);
+            ctx.rotate(node.rotation || 0);
+            ctx.scale(node.zoomx, node.zoomy);
+            if (node.customTransform) node.customTransform(ctx);
 
-        ctx.textAlign = node.align;
-        ctx.textBaseline = node.baseline;
+            ctx.font = this._resolveFont(node, fontSize);
+            ctx.textAlign = node.align;
+            ctx.textBaseline = node.baseline;
 
-        const text = resolveText(node);
-        const lines = text.split("\n");
-        const totalHeight = lines.length * lineHeight;
-        const startY = -(totalHeight / 2) + (lineHeight / 2);
+            const text = resolveText(node);
+            const lines = text.split("\n");
+            const totalHeight = lines.length * lineHeight;
+            const startY = -(totalHeight / 2) + (lineHeight / 2);
 
-        ctx.shadowColor = node.shadowColor;
-        ctx.shadowBlur = node.shadowBlur;
-        ctx.shadowOffsetX = node.shadowOffsetX;
-        ctx.shadowOffsetY = node.shadowOffsetY;
+            ctx.shadowColor = node.shadowColor;
+            ctx.shadowBlur = node.shadowBlur;
+            ctx.shadowOffsetX = node.shadowOffsetX;
+            ctx.shadowOffsetY = node.shadowOffsetY;
 
-        const draw = node.renderMode === "stroke"
-            ? (s, x, y) => ctx.strokeText(s, x, y)
-            : (s, x, y) => ctx.fillText(s, x, y);
+            const draw = node.renderMode === "stroke"
+                ? (s, x, y) => ctx.strokeText(s, x, y)
+                : (s, x, y) => ctx.fillText(s, x, y);
 
-        if (node.renderMode === "stroke") {
-            ctx.strokeStyle = node.strokeColor;
-            ctx.lineWidth = node.lineWidth;
-            ctx.lineJoin = "round";
-            ctx.lineCap = "round";
-        } else {
-            ctx.fillStyle = node.fillColor;
+            if (node.renderMode === "stroke") {
+                ctx.strokeStyle = node.strokeColor;
+                ctx.lineWidth = node.lineWidth;
+                ctx.lineJoin = "round";
+                ctx.lineCap = "round";
+            } else {
+                ctx.fillStyle = node.fillColor;
+            }
+
+            for (let i = 0; i < lines.length; i++) {
+                draw(lines[i], 0, startY + i * lineHeight);
+            }
+
+        } finally {
+            ctx.restore();
         }
-
-        for (let i = 0; i < lines.length; i++) {
-            draw(lines[i], 0, startY + i * lineHeight);
-        }
-
-        ctx.restore();
     }
 
     _resolveFont(node, fontSize) {

@@ -29,6 +29,9 @@ export class TextNode {
         this.shadowColor = "#000000";
         this.x = 0;
         this.y = 0;
+        this.zoomx = 1;
+        this.zoomy = 1;
+        this.customTransform = null;
         this.rotation = 0;
         this.zalgoIntensity = 0;
         this.zalgoSeed = 0;
@@ -71,6 +74,17 @@ export class TextNode {
 
     spin(rotation = 0) {
         this.rotation = rotation * Math.PI;
+        return this;
+    }
+
+    zoom(zx = 1, zy = 1) {
+        this.zoomx = zx;
+        this.zoomy = zy;
+        return this;
+    }
+
+    transform(fn) {
+        this.customTransform = fn;
         return this;
     }
 
