@@ -142,16 +142,11 @@ export class CanvasRenderer {
         }
         const ctx = this._testCtx;
         for (const node of nodes) {
+            // May fail if content is a function that throws.
             resolveText(node);
+            // May fail if the user's callback throws.
             if (node.customTransform) {
-                ctx.save();
-                try {
-                    ctx.rotate(node.rotation || 0);
-                    ctx.scale(node.zoomx, node.zoomy);
-                    node.customTransform(ctx);
-                } finally {
-                    ctx.restore();
-                }
+                node.customTransform(ctx);
             }
         }
     }
@@ -168,6 +163,9 @@ export class CanvasRenderer {
             ctx.translate(centerX, centerY);
             ctx.rotate(node.rotation || 0);
             ctx.scale(node.zoomx, node.zoomy);
+            if (node.customMatrix) {
+                ctx.transform(...node.customMatrix);
+            }
             if (node.customTransform) node.customTransform(ctx);
 
             ctx.font = this._resolveFont(node, fontSize);

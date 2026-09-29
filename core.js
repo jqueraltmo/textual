@@ -38,6 +38,7 @@ export class TextNode {
         this.zalgoSeed = 0;
         this.hackProb = 0;
         this.hackSeed = 0;
+        this.customMatrix = null;
     }
 
     /**
@@ -88,6 +89,13 @@ export class TextNode {
 
     transform(fn) {
         this.customTransform = fn;
+        return this;
+    }
+
+    matrix(...args) {
+        const m = args.length === 1 && Array.isArray(args[0]) ? args[0] : args;
+        const [a = 1, b = 0, c = 0, d = 1, e = 0, f = 0] = m;
+        this.customMatrix = [a, b, c, d, e, f];
         return this;
     }
 

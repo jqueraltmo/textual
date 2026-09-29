@@ -128,6 +128,34 @@ text('textual').stroke(1).size(100).transform(ctx=>{
 }).out()
 ```
 
+Or use `matrix` to provide a custom transformation matrix:
+
+```js
+text('textual').matrix(8,3,3,5,0,0).out()
+```
+
+`matrix` has 6 parameters (a, b, c, d, e=0 and f=0) hat define the affine transformation to be applied:
+
+```
+| a  c  e |
+| b  d  f |
+| 0  0  1 |
+```
+
+Examples:
+
+- Non-uniform scale: `text('textual').matrix(2, 0, 0, 0.5).out()`, wide and flat text.
+- Shear: `text('textual').matrix(1, 0.3, 0, 1).out()`, slanted text, as if you pushed it.
+- Rotation:
+
+```js
+const a = Math.PI / 4; // const a = time;
+text("textual").matrix(Math.cos(a), Math.sin(a), -Math.sin(a), Math.cos(a)).out();
+```
+
+- Reflection: `text('textual').matrix(-1, 0, 0, 1).out()`, mirrored text.
+- Chaotic transform: `text("textual").matrix(Math.cos(time), Math.cos(time*3), -Math.sin(time), Math.cos(time)).out()`;
+
 Stroke:
 
 By default, text is filled. Use `.stroke()` to render it as an outline:
