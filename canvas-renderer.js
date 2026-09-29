@@ -1,9 +1,7 @@
 "use strict";
 
-import { resolveText } from "./core.js";
-
 /**
- * Renders TextNodes to 2D canvases.
+ * Renders Nodes to 2D canvases
  * Supports two targets: own canvas, or stream
  * (an offscreen canvas whose MediaStream can be consumed elsewhere).
  */
@@ -121,7 +119,7 @@ export class CanvasRenderer {
             ctx.scale(dpr, dpr);
             ctx.globalAlpha = brightness;
             for (const node of nodes) {
-                this._drawNode(node, width, height, ctx);
+                node.draw(ctx, width, height);
             }
         } finally {
             ctx.restore();
@@ -129,8 +127,8 @@ export class CanvasRenderer {
     }
 
     /**
-    * Executes user-supplied code paths (resolveText, customTransform) in
-    * an isolated context. Throws if anything fails, so the caller can
+    * Executes user-supplied code paths (custom transforms, dynamic content)
+    * in an isolated context. Throws if anything fails, so the caller can
     * decide to skip the frame before touching the real canvas.
     */
     dryRun(nodes) {
@@ -142,80 +140,7 @@ export class CanvasRenderer {
         }
         const ctx = this._testCtx;
         for (const node of nodes) {
-            // May fail if content is a function that throws.
-            resolveText(node);
-            // May fail if the user's callback throws.
-            if (node.customTransform) {
-                node.customTransform(ctx);
-            }
+            node.dryRun(ctx);
         }
-    }
-
-    _drawNode(node, width, height, ctx) {
-        const fontSize = node.fontSize;
-        const lineHeight = fontSize * node.lineHeightMultiplier;
-
-        const centerX = ((node.x + 1) / 2) * width;
-        const centerY = ((1 - node.y) / 2) * height;
-
-        ctx.save();
-        try {
-            ctx.translate(centerX, centerY);
-            ctx.rotate(node.rotation || 0);
-            ctx.scale(node.zoomx, node.zoomy);
-            if (node.customMatrix) {
-                ctx.transform(...node.customMatrix);
-            }
-            if (node.customTransform) node.customTransform(ctx);
-
-            ctx.font = this._resolveFont(node, fontSize);
-            ctx.textAlign = node.align;
-            ctx.textBaseline = node.baseline;
-
-            const text = resolveText(node);
-            const lines = text.split("\n");
-            const totalHeight = lines.length * lineHeight;
-            const startY = -(totalHeight / 2) + (lineHeight / 2);
-
-            ctx.shadowColor = node.shadowColor;
-            ctx.shadowBlur = node.shadowBlur;
-            ctx.shadowOffsetX = node.shadowOffsetX;
-            ctx.shadowOffsetY = node.shadowOffsetY;
-
-            const draw = node.renderMode === "stroke"
-                ? (s, x, y) => ctx.strokeText(s, x, y)
-                : (s, x, y) => ctx.fillText(s, x, y);
-
-            if (node.renderMode === "stroke") {
-                ctx.strokeStyle = node.strokeColor;
-                ctx.lineWidth = node.lineWidth;
-                ctx.lineJoin = "round";
-                ctx.lineCap = "round";
-            } else {
-                ctx.fillStyle = node.fillColor;
-            }
-
-            for (let i = 0; i < lines.length; i++) {
-                draw(lines[i], 0, startY + i * lineHeight);
-            }
-
-        } finally {
-            ctx.restore();
-        }
-    }
-
-    _resolveFont(node, fontSize) {
-        // The user chose a font explicitly: respect it, even for zalgo.
-        if (node.fontFamily !== null) {
-            return `${node.fontWeight} ${fontSize}px ${node.fontFamily}`;
-        }
-        // Zalgo needs a font without combining marks so the browser uses
-        // its own fallback positioning, which handles stacked marks better
-        // than any single font we tried.
-        if (node.zalgoIntensity > 0) {
-            return `${fontSize}px Helvetica, Arial, sans-serif`;
-        }
-        // Default: platform sans-serif.
-        return `${node.fontWeight} ${fontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
     }
 }
