@@ -2,6 +2,7 @@
 
 import { expandEmojis } from "./emoji.js";
 import { zalgo } from "./zalgo.js";
+import { hackString } from "./hack-text.js";
 
 /**
  * A text node with style properties and a dispatch callback.
@@ -35,6 +36,8 @@ export class TextNode {
         this.rotation = 0;
         this.zalgoIntensity = 0;
         this.zalgoSeed = 0;
+        this.hackProb = 0;
+        this.hackSeed = 0;
     }
 
     /**
@@ -110,6 +113,12 @@ export class TextNode {
     zalgo(intensity = 5, seed = 0) {
         this.zalgoIntensity = intensity;
         this.zalgoSeed = seed;
+        return this;
+    }
+
+    hack(prob = .3, seed = 0) {
+        this.hackProb = prob;
+        this.hackSeed = seed;
         return this;
     }
 }
@@ -207,6 +216,7 @@ export function resolveText(node) {
     let text = raw === undefined || raw === null ? "" : String(raw);
 
     if (text.indexOf(":") !== -1) text = expandEmojis(text);
+    if (node.hackProb > 0) text = hackString(text, node.hackProb, node.hackSeed);
     if (node.zalgoIntensity > 0) text = zalgo(text, node.zalgoIntensity, node.zalgoSeed);
 
     return text;

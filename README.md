@@ -160,6 +160,18 @@ text("textual").zalgo(5, 1).out()            // another variant
 text("textual").zalgo(20).out()              // more marks
 ```
 
+Hack:
+
+Substitutes characters with similar characters. The options arguments are the probability of each character being changed (default 0.3), and the random seed:
+
+```js
+text('textual').hack().out();               // seed 0, always the same result
+text('textual').hack(.6, time*2).out();     // changes two times per second (seed is integer)
+text('textual').hack().zalgo().out();       // can be combined with other effects
+```
+
+Based on [text-hacker](https://github.com/geikha/text-hacker/) by GEIKHA (Apache License).
+
 ## Oscillators
 
 All oscillators take a frequency in Hz. To synchronize with the tempo, pass `cps`:
