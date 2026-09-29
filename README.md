@@ -134,7 +134,7 @@ Or use `matrix` to provide a custom transformation matrix:
 text('textual').matrix(8,3,3,5,0,0).out()
 ```
 
-`matrix` has 6 parameters (a, b, c, d, e=0 and f=0) hat define the affine transformation to be applied:
+`matrix` has 6 optional parameters (a=1, b=0, c=0, d=1, e=0 and f=0) hat define the affine transformation to be applied:
 
 ```
 | a  c  e |
