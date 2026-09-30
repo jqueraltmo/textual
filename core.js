@@ -1,13 +1,14 @@
 "use strict";
 
 import { TextNode } from "./TextNode.js";
+import { BezierNode } from "./BezierNode.js";
 
 /**
  * Compiles user code into a function. Called once per define.
  */
 export function compile(code) {
     return new Function(
-        "text", "fb", "time", "cps", "beat",
+        "text", "bezier", "curve", "sCurve", "fb", "time", "cps", "beat",
         "osc", "phasor", "tri", "saw", "sqr", "seq",
         `"use strict";\n${code}`
     );
@@ -31,6 +32,35 @@ export function run(compiled, time, tempo) {
     };
 
     const text = (content) => new TextNode(content, dispatch);
+    const bezier = (...args) => {
+        const node = new BezierNode(dispatch);
+        node.bezier(...args);
+        return node;
+    };
+    const curve = (x, y, bend = 0) => {
+        const node = new BezierNode(dispatch);
+        const px = -y;
+        const py = x;
+        node.bezier(
+            [0, 0],
+            [x / 3 + bend * px, y / 3 + bend * py],
+            [2 * x / 3 + bend * px, 2 * y / 3 + bend * py],
+            [x, y]
+        );
+        return node;
+    };
+    const sCurve = (x, y, bend = 1) => {
+        const node = new BezierNode(dispatch);
+        const px = -y;
+        const py = x;
+        node.bezier(
+            [0, 0],
+            [x / 3 + bend * px, y / 3 + bend * py],
+            [2 * x / 3 - bend * px, 2 * y / 3 - bend * py],
+            [x, y]
+        );
+        return node;
+    };
     const fb = (amount) => { feedback = amount; };
 
     const cps = tempo.cps;
@@ -77,7 +107,7 @@ export function run(compiled, time, tempo) {
         return api;
     }
 
-    compiled(text, fb, t, cps, beat, osc, phasor, tri, saw, sqr, seq);
+    compiled(text, bezier, curve, sCurve, fb, t, cps, beat, osc, phasor, tri, saw, sqr, seq);
 
     return { outputs, feedback };
 }

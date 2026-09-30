@@ -79,12 +79,12 @@ export class TextNode extends Node {
             : (s, x, y) => ctx.fillText(s, x, y);
 
         if (this.renderMode === "stroke") {
-            ctx.strokeStyle = this.strokeColor;
+            ctx.strokeStyle = this._strokeColor;
             ctx.lineWidth = this.lineWidth;
             ctx.lineJoin = "round";
             ctx.lineCap = "round";
         } else {
-            ctx.fillStyle = this.fillColor;
+            ctx.fillStyle = this._fillColor;
         }
 
         for (let i = 0; i < lines.length; i++) {

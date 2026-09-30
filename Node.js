@@ -3,8 +3,8 @@
 export class Node {
     constructor(dispatch) {
         this._dispatch = dispatch;
-        this.fillColor = "#ffffff";
-        this.strokeColor = "#ffffff";
+        this._fillColor = "#ffffff";
+        this._strokeColor = "#ffffff";
         this.lineWidth = 2;
         this.shadowOffsetX = 0;
         this.shadowOffsetY = 0;
@@ -31,13 +31,27 @@ export class Node {
     }
 
     color(r = 1, g = 1, b = 1, a = 1) {
-        const rv = r.valueOf();
-        const c = typeof rv === "string"
-            ? rv
-            : `rgba(${r * 255}, ${g * 255}, ${b * 255}, ${a})`;
-        this.fillColor = c;
-        this.strokeColor = c;
+        const c = this._toColor(r, g, b, a);
+        this._fillColor = c;
+        this._strokeColor = c;
         return this;
+    }
+
+    fillColor(r = 1, g = 1, b = 1, a = 1) {
+        this._fillColor = this._toColor(r, g, b, a);
+        return this;
+    }
+
+    strokeColor(r = 1, g = 1, b = 1, a = 1) {
+        this._strokeColor = this._toColor(r, g, b, a);
+        return this;
+    }
+
+
+    _toColor(r, g, b, a) {
+        const rv = r.valueOf();
+        if (typeof rv === "string") return rv;
+        return `rgba(${r * 255}, ${g * 255}, ${b * 255}, ${a})`;
     }
 
     spin(rotation = 0) {
@@ -79,11 +93,10 @@ export class Node {
     }
 
     draw(ctx, width, height) {
-        const centerX = ((this.x + 1) / 2) * width;
-        const centerY = ((1 - this.y) / 2) * height;
+        const center = Node._toScreenCoordinates([this.x, this.y], width, height);
         ctx.save();
         try {
-            ctx.translate(centerX, centerY);
+            ctx.translate(center[0], center[1]);
             ctx.rotate(this.rotation);
             ctx.scale(this.zoomx, this.zoomy);
             if (this.customMatrix) ctx.transform(...this.customMatrix);
@@ -92,17 +105,24 @@ export class Node {
             ctx.shadowBlur = this.shadowBlur;
             ctx.shadowOffsetX = this.shadowOffsetX;
             ctx.shadowOffsetY = this.shadowOffsetY;
-            this._drawSelf(ctx);
+            this._drawSelf(ctx, width, height);
         } finally {
             ctx.restore();
         }
     }
 
-    _drawSelf(ctx) {
+    _drawSelf(ctx, width, height) {
         throw new Error("Node._drawSelf not implemented");
     }
 
     dryRun(ctx) {
         if (this.customTransform) this.customTransform(ctx);
+    }
+
+    static _toScreenCoordinates(coords, width, height) {
+        return [
+            ((coords[0] + 1) / 2) * width,
+            ((1 - coords[1]) / 2) * height
+        ];
     }
 }

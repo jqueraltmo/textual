@@ -53,37 +53,6 @@ Size:
 text("Hello, Textual!").size(200).out();
 ```
 
-Position:
-
-```js
-text("Textual").move(-.4, .5).out()
-```
-
-```js
-text("Textual").move(-.4, .5*Math.sin(time)).out()
-```
-
-Color:
-
-RGB from 0 to 1:
-
-```js
-text("Textual").color(.5, 0, .5).out()
-```
-
-RGBA:
-
-```js
-text("Textual").color(.5, 0, .5, .4).out()
-```
-
-Feedback:
-
-```js
-fb(0.98);
-text("Textual").move(-.4, .5*Math.sin(time)).color(.5,0,.3).out()
-```
-
 Emojis:
 
 ```js
@@ -99,62 +68,6 @@ text('Textual').font('wingdings').out();
 ```
 
 When a font is not specified, zalgo text uses Helvetica (with Arial and sans-serif as fallbacks). If you set a font explicitly, zalgo will use it, even if the marks don't render well.
-
-Rotation:
-
-```js
-text("textual").spin(.2).move(.2,.2).out()
-text("textual").spin(time/4%2).out()
-```
-
-In `spin()` 1 is PI radiants.
-
-Zoom:
-
-```js
-text('textual').zoom(3,8).out()
-text('textual').zoom(seq(1,10).smooth(),1).out()
-```
-
-Arbitrary transformations:
-
-Apply any transformation you like by directly accessing the canvas context and calling its native methods:
-
-```js
-text('textual').stroke(1).size(100).transform(ctx=>{
-  ctx.rotate((time/3)%2*Math.PI);
-  ctx.translate(seq(0,300).slow(12.31).smooth(),4);
-  ctx.rotate((time/4)%2*Math.PI);
-}).out()
-```
-
-Or use `matrix` to provide a custom transformation matrix:
-
-```js
-text('textual').matrix(8,3,3,5,0,0).out()
-```
-
-`matrix` has 6 optional parameters (a=1, b=0, c=0, d=1, e=0 and f=0) hat define the affine transformation to be applied:
-
-```
-| a  c  e |
-| b  d  f |
-| 0  0  1 |
-```
-
-Examples:
-
-- Non-uniform scale: `text('textual').matrix(2, 0, 0, 0.5).out()`, wide and flat text.
-- Shear: `text('textual').matrix(1, 0.3, 0, 1).out()`, slanted text, as if you pushed it.
-- Rotation:
-
-```js
-const a = Math.PI / 4; // const a = time;
-text("textual").matrix(Math.cos(a), Math.sin(a), -Math.sin(a), Math.cos(a)).out();
-```
-
-- Reflection: `text('textual').matrix(-1, 0, 0, 1).out()`, mirrored text.
-- Chaotic transform: `text("textual").matrix(Math.cos(time), Math.cos(time*3), -Math.sin(time), Math.cos(time)).out()`;
 
 Stroke:
 
@@ -200,6 +113,100 @@ text('textual').hack().zalgo().out();       // can be combined with other effect
 
 Based on [text-hacker](https://github.com/geikha/text-hacker/) by GEIKHA (Apache License).
 
+## Transformations
+
+These transformations can be applied to any element.
+
+Position:
+
+```js
+text("Textual").move(-.4, .5).out()
+```
+
+```js
+text("Textual").move(-.4, .5*Math.sin(time)).out()
+```
+
+Color:
+
+RGB from 0 to 1:
+
+```js
+text("Textual").color(.5, 0, .5).out()
+```
+
+RGBA:
+
+```js
+text("Textual").color(.5, 0, .5, .4).out()
+```
+
+Rotation:
+
+```js
+text("textual").spin(.2).move(.2,.2).out()
+text("textual").spin(time/4%2).out()
+```
+
+In `spin()` 1 is PI radiants.
+
+Zoom:
+
+```js
+text('textual').zoom(3,8).out()
+text('textual').zoom(seq(1,10).smooth(),1).out()
+```
+
+Arbitrary transformations:
+
+Apply any transformation you like by directly accessing the canvas context and calling its native methods:
+
+```js
+text('textual').stroke(1).size(100).transform(ctx=>{
+  ctx.rotate((time/3)%2*Math.PI);
+  ctx.translate(seq(0,300).slow(12.31).smooth(),4);
+  ctx.rotate((time/4)%2*Math.PI);
+}).out()
+```
+
+```js
+text(':fire_emoji').
+transform(ctx => {
+ctx.rotate(Math.PI*saw(.2));
+ctx.translate(200,0);
+ctx.rotate(-1*Math.PI*saw(.2));
+}).out()
+fb(.92)
+```
+
+Or use `matrix` to provide a custom transformation matrix:
+
+```js
+text('textual').matrix(8,3,3,5,0,0).out()
+```
+
+`matrix` has 6 optional parameters (a=1, b=0, c=0, d=1, e=0 and f=0) hat define the affine transformation to be applied:
+
+```
+| a  c  e |
+| b  d  f |
+| 0  0  1 |
+```
+
+Examples:
+
+- Non-uniform scale: `text('textual').matrix(2, 0, 0, 0.5).out()`, wide and flat text.
+- Shear: `text('textual').matrix(1, 0.3, 0, 1).out()`, slanted text, as if you pushed it.
+- Rotation:
+
+```js
+const a = Math.PI / 4; // const a = time;
+text("textual").matrix(Math.cos(a), Math.sin(a), -Math.sin(a), Math.cos(a)).out();
+```
+
+- Reflection: `text('textual').matrix(-1, 0, 0, 1).out()`, mirrored text.
+- Chaotic transform: `text("textual").matrix(Math.cos(time), Math.cos(time*3), -Math.sin(time), Math.cos(time)).out()`;
+
 ## Oscillators
 
 All oscillators take a frequency in Hz. To synchronize with the tempo, pass `cps`:
@@ -219,6 +226,17 @@ text('textual').move(0,osc(cps)).out()
 text(":moon").spin(saw(0.5)).size(500).out()
 text(":moon").spin(saw(-0.5)).size(500).out()
 fb(.9)
+```
+
+## Feedback
+
+Feedback allows to keep the image obtained in the previous frame in the current frame.
+
+`fb(keep)` where `keep` is a number from 0 (keep nothing) to 1 (keep all).
+
+```js
+fb(0.98);
+text("Textual").move(-.4, .5*Math.sin(time)).color(.5,0,.3).out()
 ```
 
 ## Sequences
@@ -244,6 +262,59 @@ The array form `seq([1, 2, 3])` is also accepted, useful when the values come fr
 ```js
 const vals = [50, 100, 200];
 text(":heart").size(seq(vals).smooth()).out()
+```
+
+## Bezier curves
+
+Curve:
+
+A simple curve with origin (0,0). First two arguments are the end point, and the third argument is the bending.
+
+```js
+curve(1, 0).out()                       // straight line
+curve(1, 0, 0.3).out()                  // an arc
+curve(1, 0, osc(0.5) + 0.5).out()       // oscillating arc
+curve(osc(.3), osc(.23), 0.2).out().    // moving end point
+curve(1, 1, 0.3).stroke(6).out()        // diagonal, wide stroke
+curve(1, 1, 0.3).move(-0.5, -0.5).out() // moved
+curve(1, 0, osc(0.3)).fill().out()      // filled
+```
+
+Bezier curves have two colors: one for the filling, and one for the stroke:
+
+```js
+curve(1, 0, osc(.2)).fill().fillColor("navy").stroke(4).strokeColor("cyan").out()
+curve(1, 0, osc(.2)).fill().fillColor("red").stroke(0).out()
+curve(1, 0, osc(.2)).fill().color("red").stroke(12).out() // both are red
+```
+
+sCurve:
+
+An S-shaped curved with origin (0,0). First two arguments are the end point, and the third argument is the bending.
+
+```js
+sCurve(1, 0).out()
+sCurve(1, 0.5, 0.3).out()
+sCurve(1, 0, 0.5).color("cyan").stroke(4).out()
+sCurve(1, 0, osc(0.5) + 0.5).out()
+sCurve(1, 0, seq(0.2, 0.5, 1).smooth()).out()
+sCurve(1, 0, 0.5).spin(time).out()
+```
+
+Bezier:
+
+A quadratic or cubic Bezier curve.
+
+```js
+// Quadratic (3 points: start, control, end)
+bezier([0,0], [0.5, 0.5], [1, 0]).out()
+bezier([0,0, 0.5,0.5, 1,0]).out()       // flat array
+bezier(0, 0, 0.5, 0.5, 1, 0).out()      // flat args
+
+// Cubic (4 points: start, control1, control2, end)
+bezier([0,0], [0.3,0.3], [0.8,0], [1,0]).out()
+bezier([0,0, 0.3,0.3, 0.8,0, 1,0]).out()
+bezier(0,0, 0.3,0.3, 0.8,0, 1,0).out()
 ```
 
 ## Using Textual alongside with Punctual
