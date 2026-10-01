@@ -117,6 +117,7 @@ export class CanvasRenderer {
         ctx.save();
         try {
             ctx.scale(dpr, dpr);
+            ctx.translate(width / 2, height / 2);
             ctx.globalAlpha = brightness;
             for (const node of nodes) {
                 node.draw(ctx, width, height);

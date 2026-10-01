@@ -343,6 +343,41 @@ bezier([0,0, 0.3,0.3, 0.8,0, 1,0]).out()
 bezier(0,0, 0.3,0.3, 0.8,0, 1,0).out()
 ```
 
+## Grouping and cloning nodes
+
+Nodes can be grouped and transformations can be applied to the whole group:
+
+```js
+group(
+    text('textual').color('red'),
+    sCurve(1,0,.6).move(-.5,0)
+).spin(time/2).move(osc(.14)/2).out()
+```
+
+Nodes can also be cloned:
+
+```js
+const t = text('textual').color('cyan').hack(1).move(.2,0).out();
+t.clone().move(-.2,0).out();
+```
+
+Or equivalently:
+
+```js
+text('textual').color('cyan').hack(1).move(.2,0).out().clone().move(-.2,0).out();
+```
+
+`clone` can receive the same arguments as the used primitive (ie. text or curve):
+
+```js
+const base = text().color('magenta').spin(-time/2).size(80);
+
+group(
+    base.clone(":sun").move(remap(osc(.1),0,.4), 0),
+    base.clone(":moon").move(remap(osc(.1),0,-.4), 0),
+).spin(time/2).out()
+```
+
 ## Using Textual with Punctual
 
 In Estuary, use two cells: one for Punctual and one for Textual.

@@ -2,13 +2,16 @@
 
 import { TextNode } from "./TextNode.js";
 import { BezierNode } from "./BezierNode.js";
+import { CurveNode } from "./CurveNode.js";
+import { SCurveNode } from "./SCurveNode.js";
+import { GroupNode } from "./GroupNode.js";
 
 /**
  * Compiles user code into a function. Called once per define.
  */
 export function compile(code) {
     return new Function(
-        "text", "bezier", "curve", "sCurve", "fb", "time", "cps", "beat",
+        "group", "text", "bezier", "curve", "sCurve", "fb", "time", "cps", "beat",
         "osc", "phasor", "tri", "saw", "sqr", "unipolar", "bipolar", "remap", "linlin",
         "seq",
         `"use strict";\n${code}`
@@ -37,35 +40,11 @@ export function run(compiled, time, tempo) {
     };
 
     const text = (content) => new TextNode(content, dispatch);
-    const bezier = (...args) => {
-        const node = new BezierNode(dispatch);
-        node.bezier(...args);
-        return node;
-    };
-    const curve = (x, y, bend = 0) => {
-        const node = new BezierNode(dispatch);
-        const px = -y;
-        const py = x;
-        node.bezier(
-            [0, 0],
-            [x / 3 + bend * px, y / 3 + bend * py],
-            [2 * x / 3 + bend * px, 2 * y / 3 + bend * py],
-            [x, y]
-        );
-        return node;
-    };
-    const sCurve = (x, y, bend = 1) => {
-        const node = new BezierNode(dispatch);
-        const px = -y;
-        const py = x;
-        node.bezier(
-            [0, 0],
-            [x / 3 + bend * px, y / 3 + bend * py],
-            [2 * x / 3 - bend * px, 2 * y / 3 - bend * py],
-            [x, y]
-        );
-        return node;
-    };
+    const bezier = (...args) => new BezierNode(dispatch, ...args);
+    const curve = (x, y, bend) => new CurveNode(dispatch, x, y, bend);
+    const sCurve = (x, y, bend) => new SCurveNode(dispatch, x, y, bend);
+    const group = (...args) => new GroupNode(dispatch, ...args);
+
     const fb = (amount) => { feedback = amount; };
 
     const cps = tempo.cps;
@@ -117,7 +96,7 @@ export function run(compiled, time, tempo) {
         return api;
     }
 
-    compiled(text, bezier, curve, sCurve, fb, t, cps, beat, osc, phasor, tri, saw, sqr, unipolar, bipolar, remap, linlin, seq);
+    compiled(group, text, bezier, curve, sCurve, fb, t, cps, beat, osc, phasor, tri, saw, sqr, unipolar, bipolar, remap, linlin, seq);
 
     return { outputs, feedback };
 }

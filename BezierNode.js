@@ -3,12 +3,20 @@
 import { Node } from './Node.js';
 
 export class BezierNode extends Node {
-    constructor(dispatch) {
+    constructor(dispatch, ...args) {
         super(dispatch);
         this.curveType = "cubic";
         this.points = [[0, 0], [0.3, 0.3], [0.8, 0], [0.4, 0.8]];
         this._fill = false;
         this._stroke = true;
+        if (args.length > 0) this.bezier(...args);
+    }
+
+    clone(...args) {
+        const copy = super.clone();
+        copy.points = this.points.map(p => [...p]);
+        if (args.length > 0) copy.bezier(...args);
+        return copy;
     }
 
     fill(on = true) {

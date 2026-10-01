@@ -28,6 +28,14 @@ export class TextNode extends Node {
         return String(content);
     }
 
+    clone(content) {
+        const copy = super.clone();
+        if (content !== undefined) {
+            copy.content = TextNode._normalizeContent(content);
+        }
+        return copy;
+    }
+
     size(fontSize = 48) {
         this.fontSize = fontSize;
         return this;

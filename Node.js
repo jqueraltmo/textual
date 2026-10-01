@@ -24,6 +24,12 @@ export class Node {
         return this;
     }
 
+    clone() {
+        const copy = Object.create(Object.getPrototypeOf(this));
+        Object.assign(copy, this);
+        return copy;
+    }
+
     move(x = 0, y = 0) {
         this.x = x;
         this.y = y;
@@ -104,10 +110,13 @@ export class Node {
     }
 
     draw(ctx, width, height) {
-        const center = Node._toScreenCoordinates([this.x, this.y], width, height);
+        // Positions are in normalized [-1, 1] coords, relative to the
+        // parent's origin. The renderer sets the origin at canvas center.
+        const px = this.x * width / 2;
+        const py = -this.y * height / 2;
         ctx.save();
         try {
-            ctx.translate(center[0], center[1]);
+            ctx.translate(px, py);
             ctx.rotate(this.rotation);
             ctx.scale(this.zoomx, this.zoomy);
             if (this.customMatrix) ctx.transform(...this.customMatrix);
@@ -128,12 +137,5 @@ export class Node {
 
     dryRun(ctx) {
         if (this.customTransform) this.customTransform(ctx);
-    }
-
-    static _toScreenCoordinates(coords, width, height) {
-        return [
-            ((coords[0] + 1) / 2) * width,
-            ((1 - coords[1]) / 2) * height
-        ];
     }
 }
