@@ -9,9 +9,14 @@ import { BezierNode } from "./BezierNode.js";
 export function compile(code) {
     return new Function(
         "text", "bezier", "curve", "sCurve", "fb", "time", "cps", "beat",
-        "osc", "phasor", "tri", "saw", "sqr", "seq",
+        "osc", "phasor", "tri", "saw", "sqr", "unipolar", "bipolar", "remap", "linlin",
+        "seq",
         `"use strict";\n${code}`
     );
+}
+
+function lift(fn) {
+    return (v, ...rest) => Array.isArray(v) ? v.map(x => fn(x, ...rest)) : fn(v, ...rest);
 }
 
 /**
@@ -69,15 +74,20 @@ export function run(compiled, time, tempo) {
     // Anchored to the tempo reference (beat / cps), matching Punctual's DSL.
     const t = beat / cps;
 
-    const osc = (freq = 1) => Math.sin(2 * Math.PI * t * freq);
+    const osc = lift((freq = 1) => Math.sin(2 * Math.PI * t * freq));
 
-    const phasor = (freq = 1) => {
+    const phasor = lift((freq = 1) => {
         const x = t * freq;
         return x - Math.floor(x);
-    };
-    const tri = (freq = 1) => Math.abs(phasor(freq) - 0.5) * 4 - 1;
-    const saw = (freq = 1) => phasor(freq) * 2 - 1;
-    const sqr = (freq = 1) => (phasor(freq) < 0.5 ? -1 : 1);
+    });
+    const tri = lift((freq = 1) => Math.abs(phasor(freq) - 0.5) * 4 - 1);
+    const saw = lift((freq = 1) => phasor(freq) * 2 - 1);
+    const sqr = lift((freq = 1) => (phasor(freq) < 0.5 ? -1 : 1));
+
+    const unipolar = lift(v => (v + 1) / 2);
+    const bipolar = lift(v => v * 2 - 1);
+    const remap = lift((v, a, b) => a + (v + 1) * (b - a) / 2);
+    const linlin = lift((v, a, b, c, d) => c + (v - a) * (d - c) / (b - a));
 
     const seq = (...args) => {
         const values = (args.length === 1 && Array.isArray(args[0])) ? args[0] : args;
@@ -107,7 +117,7 @@ export function run(compiled, time, tempo) {
         return api;
     }
 
-    compiled(text, bezier, curve, sCurve, fb, t, cps, beat, osc, phasor, tri, saw, sqr, seq);
+    compiled(text, bezier, curve, sCurve, fb, t, cps, beat, osc, phasor, tri, saw, sqr, unipolar, bipolar, remap, linlin, seq);
 
     return { outputs, feedback };
 }

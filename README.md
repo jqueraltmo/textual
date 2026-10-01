@@ -133,13 +133,22 @@ Color:
 RGB values from 0 to 1:
 
 ```js
-text("Textual").color(.5, 0, .5).out()
+text('Textual').color(.5, 0, .5).out()
+text('textual').color([.7,.3,.4]).out()
 ```
 
 RGBA:
 
 ```js
-text("Textual").color(.5, 0, .5, .4).out()
+text('Textual').color(.5, 0, .5, .4).out()
+text('textual').color([.7,.3,.4,.5]).out()
+```
+
+Color names:
+
+```js
+text('textual').color('cyan').out()
+text('textual').color(seq('cyan','orange')).out()
 ```
 
 Rotation:
@@ -227,6 +236,22 @@ text('textual').move(0,osc(cps)).out()
 text(":moon").spin(saw(0.5)).size(500).out()
 text(":moon").spin(saw(-0.5)).size(500).out()
 fb(.9)
+```
+
+## Reescaling values
+
+- `bipolar`: from [0, 1] to [-1, 1].
+- `unipolar`: from [-1, 1] to [0, 1].
+- `remap`: from [-1, 1] to [a, b].
+- `linlin`: from [a, b] to [c, d].
+
+```js
+text('textual').color(unipolar(saw(.2)), 0, 0).out()
+text('textual').color(unipolar(saw([.06, .13, .19]))).out()
+
+text('textual').spin(remap(osc(-.19), -.1, .1)).
+  move(remap(osc(.19), -.5, .5)).out()
+text('textual').zalgo(remap(tri(.018),1,50)).out()
 ```
 
 ## Feedback

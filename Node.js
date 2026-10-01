@@ -47,10 +47,21 @@ export class Node {
         return this;
     }
 
+    _toColor(r = 1, g = 1, b = 1, a = 1) {
+        // Resolve seq-like values to their current value.
+        r = r?.valueOf ? r.valueOf() : r;
+        g = g?.valueOf ? g.valueOf() : g;
+        b = b?.valueOf ? b.valueOf() : b;
+        a = a?.valueOf ? a.valueOf() : a;
 
-    _toColor(r, g, b, a) {
-        const rv = r.valueOf();
-        if (typeof rv === "string") return rv;
+        // If r is an array, destructure it into (r, g, b, a).
+        if (Array.isArray(r)) {
+            [r = 1, g = 1, b = 1, a = 1] = r;
+        }
+
+        // A string r means an explicit CSS color.
+        if (typeof r === "string") return r;
+
         return `rgba(${r * 255}, ${g * 255}, ${b * 255}, ${a})`;
     }
 
