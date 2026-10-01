@@ -1,14 +1,15 @@
-# Textual - Minimal livecoding language to display text
+<!-- LTeX: language=en-US -->
+# Textual - A minimal live-coding language for displaying text
 
 ## Local server
 
-How to start a local server:
+To start a local server, run:
 
 ```bash
 npx serve --cors
 ```
 
-## Including Textual in Estuary
+## Using Textual in Estuary
 
 ```js
 !exolang "textual" "http://localhost:3000/exolang.js"
@@ -26,11 +27,11 @@ Tell Estuary that you are using Textual by starting your code with this line:
 
 ## Performance
 
-Textual renders on a fullscreen 2D canvas. Performance varies significantly between browsers and it's much better in chrome/chromium than in firefox.
+Textual renders on a full-screen 2D canvas. Performance varies significantly between browsers; it is much better in Chrome/Chromium than in Firefox.
 
 ## Displaying text
 
-Display a text in the middle of the screen with default settings:
+Display text in the center of the screen with the default settings:
 
 ```js
 text("Hello, world!").out();
@@ -61,13 +62,13 @@ text(":moon :sun :water :fire :heart :mercury").size(100).out()
 
 Font family:
 
-By default, Textual uses the platform's sans-serif font. You can pick a specific font with `.font()`:
+By default, Textual uses the platform's sans-serif font. You can choose a specific font with `.font()`:
 
 ```js
 text('Textual').font('wingdings').out();
 ```
 
-When a font is not specified, zalgo text uses Helvetica (with Arial and sans-serif as fallbacks). If you set a font explicitly, zalgo will use it, even if the marks don't render well.
+When no font is specified, zalgo text uses Helvetica (with Arial and sans-serif as fallbacks). If you set a font explicitly, zalgo will use it even if the marks do not render well.
 
 Stroke:
 
@@ -80,7 +81,7 @@ text('textual').size(200).color('pink').out()
 
 Shadow:
 
-Adds a shadow to the text. Arguments follow Canvas's `setShadow` order: `shadow(x, y, blur, color)`:
+Adds a shadow to the text. The arguments follow Canvas's `setShadow` order: `shadow(x, y, blur, color)`:
 
 ```js
 text("textual").shadow().out()                    // 2, 2, 4, gray
@@ -93,7 +94,7 @@ Use them sparingly in live performances.
 
 Zalgo:
 
-Adds combining diacritical marks to the text, for a glitchy or chaotic look. The optional arguments are the average number of marks per character (default 5), and the random seed:
+Adds combining diacritical marks to the text for a glitchy or chaotic look. The optional arguments are the average number of marks per character (default 5) and the random seed:
 
 ```js
 text("textual").zalgo().out()                // seed 0, always the same result
@@ -103,7 +104,7 @@ text("textual").zalgo(20).out()              // more marks
 
 Hack:
 
-Substitutes characters with similar characters. The options arguments are the probability of each character being changed (default 0.3), and the random seed:
+Substitutes characters with similar alternatives. The optional arguments are the probability of each character being changed (default 0.3) and the random seed:
 
 ```js
 text('textual').hack().out();               // seed 0, always the same result
@@ -129,7 +130,7 @@ text("Textual").move(-.4, .5*Math.sin(time)).out()
 
 Color:
 
-RGB from 0 to 1:
+RGB values from 0 to 1:
 
 ```js
 text("Textual").color(.5, 0, .5).out()
@@ -148,7 +149,7 @@ text("textual").spin(.2).move(.2,.2).out()
 text("textual").spin(time/4%2).out()
 ```
 
-In `spin()` 1 is PI radiants.
+In `spin()`, 1 equals PI radians.
 
 Zoom:
 
@@ -185,7 +186,7 @@ Or use `matrix` to provide a custom transformation matrix:
 text('textual').matrix(8,3,3,5,0,0).out()
 ```
 
-`matrix` has 6 optional parameters (a=1, b=0, c=0, d=1, e=0 and f=0) hat define the affine transformation to be applied:
+`matrix` has six optional parameters (`a=1`, `b=0`, `c=0`, `d=1`, `e=0`, and `f=0`) that define the affine transformation to be applied:
 
 ```
 | a  c  e |
@@ -230,7 +231,7 @@ fb(.9)
 
 ## Feedback
 
-Feedback allows to keep the image obtained in the previous frame in the current frame.
+Feedback allows keeping the image obtained in the previous frame in the current frame.
 
 `fb(keep)` where `keep` is a number from 0 (keep nothing) to 1 (keep all).
 
@@ -257,30 +258,30 @@ seq(1, 2, 3).smooth()         // interpolate instead of stepping
 seq(1, 2, 3).fast(2).smooth() // combined
 ```
 
-The array form `seq([1, 2, 3])` is also accepted, useful when the values come from a variable:
+The array form `seq([1, 2, 3])` is also accepted and is useful when the values come from a variable:
 
 ```js
 const vals = [50, 100, 200];
 text(":heart").size(seq(vals).smooth()).out()
 ```
 
-## Bezier curves
+## Bézier curves
 
 Curve:
 
-A simple curve with origin (0,0). First two arguments are the end point, and the third argument is the bending.
+A simple curve with origin (0,0). The first two arguments are the end point, and the third is the bend.
 
 ```js
 curve(1, 0).out()                       // straight line
 curve(1, 0, 0.3).out()                  // an arc
 curve(1, 0, osc(0.5) + 0.5).out()       // oscillating arc
-curve(osc(.3), osc(.23), 0.2).out().    // moving end point
+curve(osc(.3), osc(.23), 0.2).out()     // moving end point
 curve(1, 1, 0.3).stroke(6).out()        // diagonal, wide stroke
 curve(1, 1, 0.3).move(-0.5, -0.5).out() // moved
 curve(1, 0, osc(0.3)).fill().out()      // filled
 ```
 
-Bezier curves have two colors: one for the filling, and one for the stroke:
+Bézier curves have two colors: one for the fill and one for the stroke:
 
 ```js
 curve(1, 0, osc(.2)).fill().fillColor("navy").stroke(4).strokeColor("cyan").out()
@@ -290,7 +291,7 @@ curve(1, 0, osc(.2)).fill().color("red").stroke(12).out() // both are red
 
 sCurve:
 
-An S-shaped curved with origin (0,0). First two arguments are the end point, and the third argument is the bending.
+An S-shaped curve with origin (0,0). The first two arguments are the end point, and the third is the bend.
 
 ```js
 sCurve(1, 0).out()
@@ -301,9 +302,9 @@ sCurve(1, 0, seq(0.2, 0.5, 1).smooth()).out()
 sCurve(1, 0, 0.5).spin(time).out()
 ```
 
-Bezier:
+Bézier:
 
-A quadratic or cubic Bezier curve.
+A quadratic or cubic Bézier curve.
 
 ```js
 // Quadratic (3 points: start, control, end)
@@ -317,11 +318,11 @@ bezier([0,0, 0.3,0.3, 0.8,0, 1,0]).out()
 bezier(0,0, 0.3,0.3, 0.8,0, 1,0).out()
 ```
 
-## Using Textual alongside with Punctual
+## Using Textual with Punctual
 
-In Estuary, use two cells, one for Punctual and one for Textual.
+In Estuary, use two cells: one for Punctual and one for Textual.
 
-Force the creation of the Punctual canvas first, as it is opaque:
+Force the creation of the Punctual canvas first, because it is opaque:
 
 ```haskell
 hline 0 0.001 >> add;
@@ -349,4 +350,4 @@ v >> add;
 
 Add any Punctual effects and enjoy!
 
-This method uses a very hacky approach, because Punctual doesn't support streams right now, and it depends on loading Textual before Punctual accesses any video.
+This method uses a very hacky approach because Punctual does not support streams yet, and it depends on loading Textual before Punctual accesses any video.
