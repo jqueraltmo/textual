@@ -286,8 +286,9 @@ seq(1, 2, 3).fast(2).smooth() // combined
 The array form `seq([1, 2, 3])` is also accepted and is useful when the values come from a variable:
 
 ```js
-const vals = [50, 100, 200];
-text(":heart").size(seq(vals).smooth()).out()
+text(":heart").size(seq([50, 100, 200]).smooth()).out()      // Array form
+text(":heart").size(seq(50, 100, 200).smooth()).out()        // Equivalent without array
+text('textual').color(seq([1,0,0],[0,1,0]).smooth()).out()   // Smooth works with arrays too
 ```
 
 ## Bézier curves

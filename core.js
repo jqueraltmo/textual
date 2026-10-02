@@ -78,11 +78,26 @@ export function run(compiled, time, tempo) {
             const pos = beat * state.speed * n + state.offset;
             const norm = ((pos % n) + n) % n;
             const i = Math.floor(norm);
-            if (!state.smooth) return values[i];
-            const frac = norm - i;
             const a = values[i];
+            if (!state.smooth) return a;
             const b = values[(i + 1) % n];
-            return a + (b - a) * frac;
+
+            if (typeof a === "number" && typeof b === "number") {
+                const frac = norm - i;
+                return a + (b - a) * frac;
+            }
+
+            if (Array.isArray(a) && Array.isArray(b)) {
+                const frac = norm - i;
+                const len = Math.min(a.length, b.length);
+                const out = new Array(len);
+                for (let k = 0; k < len; k++) {
+                    out[k] = a[k] + (b[k] - a[k]) * frac;
+                }
+                return out;
+            }
+
+            return a;
         }
 
         const api = {
@@ -92,6 +107,12 @@ export function run(compiled, time, tempo) {
             smooth(on = true) { state.smooth = on; return api; },
             valueOf() { return evaluate(); },
             toString() { return String(evaluate()); },
+            [Symbol.iterator]() {
+                const value = evaluate();
+                return Array.isArray(value)
+                    ? value[Symbol.iterator]()
+                    : [value][Symbol.iterator]();
+            }
         };
         return api;
     }
