@@ -16,16 +16,14 @@ export class TextNode extends Node {
         this.align = "center";
         this.baseline = "middle";
         this.renderMode = "fill";
+        this.tracking = undefined;
+        this._wordSpacing = undefined;
+        this._stretch = undefined;
+        this._caps = false;
         this.zalgoIntensity = 0;
         this.zalgoSeed = 0;
         this.hackProb = 0;
         this.hackSeed = 0;
-    }
-
-    static _normalizeContent(content) {
-        if (typeof content === "function") return content;
-        if (content === undefined || content === null) return "";
-        return String(content);
     }
 
     clone(content) {
@@ -57,6 +55,16 @@ export class TextNode extends Node {
         return this;
     }
 
+    sp(px = 4) { this.tracking = px; return this; }
+    spacing(px = 4) { return this.sp(px); }
+
+    wsp(px = 8) { this._wordSpacing = px; return this; }
+    wordspacing(px = 8) { return this.wsp(px); }
+
+    stretch(v = -0.5) { this._stretch = v; return this; }
+
+    caps(v = 1) { this._caps = v; return this; }
+
     zalgo(intensity = 5, seed = 0) {
         this.zalgoIntensity = intensity;
         this.zalgoSeed = seed;
@@ -77,6 +85,20 @@ export class TextNode extends Node {
         ctx.font = this._resolveFont();
         ctx.textAlign = this.align;
         ctx.textBaseline = this.baseline;
+
+        const tracking = this.tracking?.valueOf?.() ?? this.tracking;
+        if (tracking !== undefined) ctx.letterSpacing = `${tracking}px`;
+
+        const wsp = this._wordSpacing?.valueOf?.() ?? this._wordSpacing;
+        if (wsp !== undefined) ctx.wordSpacing = `${wsp}px`;
+
+        const stretch = this._stretch?.valueOf?.() ?? this._stretch;
+        if (stretch !== undefined) {
+            ctx.fontStretch = TextNode._resolveStretch(stretch);
+        }
+
+        const capsValue = this._caps?.valueOf?.() ?? this._caps;
+        if (capsValue > 0) ctx.fontVariantCaps = "small-caps";
 
         const text = this._resolveText();
         const lines = text.split("\n");
@@ -134,5 +156,23 @@ export class TextNode extends Node {
     dryRun(env) {
         super.dryRun(env);
         this._resolveText();
+    }
+
+    static _normalizeContent(content) {
+        if (typeof content === "function") return content;
+        if (content === undefined || content === null) return "";
+        return String(content);
+    }
+
+    static _resolveStretch(v) {
+        if (typeof v === "string") return v;
+        const STEPS = [
+            "ultra-condensed", "extra-condensed", "condensed",
+            "semi-condensed", "normal",
+            "semi-expanded", "expanded", "extra-expanded", "ultra-expanded"
+        ];
+        const clamped = Math.max(-1, Math.min(1, v));
+        const i = Math.round((clamped + 1) / 2 * (STEPS.length - 1));
+        return STEPS[i];
     }
 }

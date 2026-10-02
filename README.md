@@ -114,6 +114,49 @@ text('textual').hack().zalgo().out();       // can be combined with other effect
 
 Based on [text-hacker](https://github.com/geikha/text-hacker/) by GEIKHA (Apache License).
 
+Letter-spacing:
+
+Changes the space between letters. `sp` and `spacing` are synonyms.
+
+```js
+text('textual').sp(50).out()
+text('textual').sp(remap(osc(.12), 0, 30)).out()
+```
+
+Argument is in pixels and the default value is 4.
+
+Word-spacing:
+
+Change the space between words. `wsp` and `wordspacing` are synonyms.
+
+```js
+text('tex tual').wsp(80).out()
+text('tex tual').wsp(seq(100,0).smooth()).out()
+```
+
+Argument is in pixels and the default value is 8.
+
+Stretch:
+
+Expands or condences the font.
+
+```js
+text('textual').stretch(.5).out();
+text('textual').stretch(osc(.15)).out();
+text('textual').stretch('expanded').out();
+```
+
+The optional argument can be a number between -1 and 1 or one of these options: "ultra-condensed", "extra-condensed", "condensed", "semi-condensed", "normal", "semi-expanded", "expanded", "extra-expanded", "ultra-expanded". Default value is -0.5.
+
+Caps:
+
+Activates small caps.
+
+```js
+text('Textual').caps().out()
+text('Textual').caps(sqr(.2)).out()
+```
+
 ## Transformations
 
 These transformations can be applied to any element.
