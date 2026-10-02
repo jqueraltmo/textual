@@ -111,16 +111,20 @@ export class CanvasRenderer {
 
         const { canvas, ctx } = t;
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        const width = canvas.width / dpr;
-        const height = canvas.height / dpr;
+        const env = {
+            ctx,
+            width: canvas.width / dpr,
+            height: canvas.height / dpr,
+            dpr,
+        };
 
         ctx.save();
         try {
             ctx.scale(dpr, dpr);
-            ctx.translate(width / 2, height / 2);
+            ctx.translate(env.width / 2, env.height / 2);
             ctx.globalAlpha = brightness;
             for (const node of nodes) {
-                node.draw(ctx, width, height);
+                node.draw(env);
             }
         } finally {
             ctx.restore();
@@ -139,9 +143,15 @@ export class CanvasRenderer {
             c.height = 1;
             this._testCtx = c.getContext("2d");
         }
-        const ctx = this._testCtx;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const env = {
+            ctx: this._testCtx,
+            width: this.canvas.width / dpr,
+            height: this.canvas.height / dpr,
+            dpr,
+        };
         for (const node of nodes) {
-            node.dryRun(ctx);
+            node.dryRun(env);
         }
     }
 }

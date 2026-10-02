@@ -15,16 +15,16 @@ export class GroupNode extends Node {
         return copy;
     }
 
-    _drawSelf(ctx, width, height) {
+    _drawSelf(env) {
         for (const child of this.children) {
-            child.draw(ctx, width, height);
+            child.draw(env);
         }
     }
 
-    dryRun(ctx) {
-        super.dryRun(ctx);
+    dryRun(env) {
+        super.dryRun(env);
         for (const child of this.children) {
-            child.dryRun(ctx);
+            child.dryRun(env);
         }
     }
 }

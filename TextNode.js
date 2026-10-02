@@ -69,7 +69,8 @@ export class TextNode extends Node {
         return this;
     }
 
-    _drawSelf(ctx) {
+    _drawSelf(env) {
+        const ctx = env.ctx;
         const fontSize = this.fontSize;
         const lineHeight = fontSize * this.lineHeightMultiplier;
 
@@ -130,8 +131,8 @@ export class TextNode extends Node {
         return text;
     }
 
-    dryRun(ctx) {
-        super.dryRun(ctx);
+    dryRun(env) {
+        super.dryRun(env);
         this._resolveText();
     }
 }

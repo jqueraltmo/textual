@@ -109,11 +109,10 @@ export class Node {
         return this;
     }
 
-    draw(ctx, width, height) {
-        // Positions are in normalized [-1, 1] coords, relative to the
-        // parent's origin. The renderer sets the origin at canvas center.
-        const px = this.x * width / 2;
-        const py = -this.y * height / 2;
+    draw(env) {
+        const px = this.x * env.width / 2;
+        const py = -this.y * env.height / 2;
+        const ctx = env.ctx;
         ctx.save();
         try {
             ctx.translate(px, py);
@@ -125,17 +124,17 @@ export class Node {
             ctx.shadowBlur = this.shadowBlur;
             ctx.shadowOffsetX = this.shadowOffsetX;
             ctx.shadowOffsetY = this.shadowOffsetY;
-            this._drawSelf(ctx, width, height);
+            this._drawSelf(env);
         } finally {
             ctx.restore();
         }
     }
 
-    _drawSelf(ctx, width, height) {
+    _drawSelf(env) {
         throw new Error("Node._drawSelf not implemented");
     }
 
-    dryRun(ctx) {
-        if (this.customTransform) this.customTransform(ctx);
+    dryRun(env) {
+        if (this.customTransform) this.customTransform(env.ctx);
     }
 }

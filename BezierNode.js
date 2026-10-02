@@ -62,11 +62,11 @@ export class BezierNode extends Node {
         return this;
     }
 
-    _drawSelf(ctx, width, height) {
-        const toLocal = (p) => [p[0] * width / 2, -p[1] * height / 2];
+    _drawSelf(env) {
+        const ctx = env.ctx;
+        const toLocal = (p) => [p[0] * env.width / 2, -p[1] * env.height / 2];
 
         const [start, ...rest] = this.points;
-
         ctx.beginPath();
         ctx.moveTo(...toLocal(start));
 
@@ -75,12 +75,9 @@ export class BezierNode extends Node {
             ctx.quadraticCurveTo(...toLocal(cp), ...toLocal(end));
         } else {
             const [cp1, cp2, end] = rest;
-            ctx.bezierCurveTo(
-                ...toLocal(cp1),
-                ...toLocal(cp2),
-                ...toLocal(end)
-            );
+            ctx.bezierCurveTo(...toLocal(cp1), ...toLocal(cp2), ...toLocal(end));
         }
+
         if (this._fill) {
             ctx.fillStyle = this._fillColor;
             ctx.fill();
