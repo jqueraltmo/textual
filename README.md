@@ -315,14 +315,14 @@ curve(1, 0, osc(.2)).fill().fillColor("red").stroke(0).out()
 curve(1, 0, osc(.2)).fill().color("red").stroke(12).out() // both are red
 ```
 
-sCurve:
+sCurve/scurve:
 
 An S-shaped curve with origin (0,0). The first two arguments are the end point, and the third is the bend.
 
 ```js
-sCurve(1, 0).out()
-sCurve(1, 0.5, 0.3).out()
-sCurve(1, 0, 0.5).color("cyan").stroke(4).out()
+scurve(1, 0).out()
+scurve(1, 0.5, 0.3).out()
+scurve(1, 0, 0.5).color("cyan").stroke(4).out()
 sCurve(1, 0, osc(0.5) + 0.5).out()
 sCurve(1, 0, seq(0.2, 0.5, 1).smooth()).out()
 sCurve(1, 0, 0.5).spin(time).out()

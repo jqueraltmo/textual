@@ -11,7 +11,7 @@ import { GroupNode } from "./GroupNode.js";
  */
 export function compile(code) {
     return new Function(
-        "group", "text", "bezier", "curve", "sCurve", "fb", "time", "cps", "beat",
+        "group", "text", "bezier", "curve", "sCurve", "scurve", "fb", "time", "cps", "beat",
         "osc", "phasor", "tri", "saw", "sqr", "unipolar", "bipolar", "remap", "linlin",
         "seq",
         `"use strict";\n${code}`
@@ -117,7 +117,7 @@ export function run(compiled, time, tempo) {
         return api;
     }
 
-    compiled(group, text, bezier, curve, sCurve, fb, t, cps, beat, osc, phasor, tri, saw, sqr, unipolar, bipolar, remap, linlin, seq);
+    compiled(group, text, bezier, curve, sCurve, sCurve, fb, t, cps, beat, osc, phasor, tri, saw, sqr, unipolar, bipolar, remap, linlin, seq);
 
     return { outputs, feedback };
 }
