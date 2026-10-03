@@ -5,13 +5,14 @@ import { BezierNode } from "./BezierNode.js";
 import { CurveNode } from "./CurveNode.js";
 import { SCurveNode } from "./SCurveNode.js";
 import { GroupNode } from "./GroupNode.js";
+import { RectNode } from "./RectNode.js";
 
 /**
  * Compiles user code into a function. Called once per define.
  */
 export function compile(code) {
     return new Function(
-        "group", "text", "bezier", "curve", "sCurve", "scurve", "fb", "time", "cps", "beat",
+        "group", "text", "bezier", "curve", "sCurve", "scurve", "rect", "fb", "time", "cps", "beat",
         "osc", "phasor", "tri", "saw", "sqr", "unipolar", "bipolar", "remap", "linlin",
         "seq",
         `"use strict";\n${code}`
@@ -43,6 +44,7 @@ export function run(compiled, time, tempo) {
     const bezier = (...args) => new BezierNode(dispatch, ...args);
     const curve = (x, y, bend) => new CurveNode(dispatch, x, y, bend);
     const sCurve = (x, y, bend) => new SCurveNode(dispatch, x, y, bend);
+    const rect = (x, y, w, h) => new RectNode(dispatch, x, y, w, h);
     const group = (...args) => new GroupNode(dispatch, ...args);
 
     const fb = (amount) => { feedback = amount; };
@@ -106,6 +108,7 @@ export function run(compiled, time, tempo) {
             offset(k = 1) { state.offset += k; return api; },
             smooth(on = true) { state.smooth = on; return api; },
             valueOf() { return evaluate(); },
+            values() { return values; },
             toString() { return String(evaluate()); },
             [Symbol.iterator]() {
                 const value = evaluate();
@@ -117,7 +120,7 @@ export function run(compiled, time, tempo) {
         return api;
     }
 
-    compiled(group, text, bezier, curve, sCurve, sCurve, fb, t, cps, beat, osc, phasor, tri, saw, sqr, unipolar, bipolar, remap, linlin, seq);
+    compiled(group, text, bezier, curve, sCurve, sCurve, rect, fb, t, cps, beat, osc, phasor, tri, saw, sqr, unipolar, bipolar, remap, linlin, seq);
 
     return { outputs, feedback };
 }
