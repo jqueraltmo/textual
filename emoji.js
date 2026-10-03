@@ -18,10 +18,10 @@ export const EMOJI = {
     quintessence: "🜀",
     aether: "🜀",
     ether: "🜀",
-    air: "🜁",
-    fire: "🜂",
-    earth: "🜃",
-    water: "🜄",
+    air_sym: "🜁",
+    fire_sym: "🜂",
+    earth_sym: "🜃",
+    water_sym: "🜄",
 
     // ---------------------------------------------------------------
     // Zodiac signs
@@ -42,10 +42,8 @@ export const EMOJI = {
     // ---------------------------------------------------------------
     // Planets
     // ---------------------------------------------------------------
-    sun: "☉",
-    sol: "☉",
-    moon: "☾",
-    luna: "☾",
+    sun_sym: "☉",
+    moon_sym: "☾",
     mercury: "☿",
     venus: "♀",
     mars: "♂",
@@ -89,7 +87,7 @@ export const EMOJI = {
     "+1": "👍",
     thumbsdown: "👎",
     "-1": "👎",
-    fire_emoji: "🔥",
+    fire: "🔥",
     star: "⭐",
     sparkles: "✨",
     rocket: "🚀",
@@ -100,6 +98,13 @@ export const EMOJI = {
     cat: "🐱",
     dog: "🐶",
     pill: "💊",
+    cloud: "☁️",
+    umbrella: "☂️",
+    snowman: "☃️",
+    coffee: "☕",
+    sun: "☀️",
+    moon: "🌙",
+    earth: "🌍"
 };
 
 const PATTERN = /:([a-z0-9_+-]+):?/gi;
