@@ -327,6 +327,8 @@ fb(.9)
 text('textual').color(unipolar(saw(.2)), 0, 0).out()
 text('textual').color(unipolar(saw([.06, .13, .19]))).out()
 
+text('textual').move(bipolar(Math.random())).out();
+
 text('textual').spin(remap(osc(-.19), -.1, .1)).
   move(remap(osc(.19), -.5, .5)).out()
 text('textual').zalgo(remap(tri(.018),1,50)).out()
