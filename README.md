@@ -426,6 +426,21 @@ bezier([0,0, 0.3,0.3, 0.8,0, 1,0]).out()
 bezier(0,0, 0.3,0.3, 0.8,0, 1,0).out()
 ```
 
+## Rectangles
+
+Draw rectangles. Default values are 1 for width and height.
+
+```js
+rect().out()    // Centered, stroke
+rect(.5, .2).out()  // width: 0.5, height: 0.2
+
+fb(1)
+rect().move(osc(.11), osc(.13)).comp('difference').stroke(4).color(unipolar(osc([.14,.31,.24]))).out()
+
+rect().spin(saw(.2)).out().fill()
+rect(.5,.5).color('cyan').fill().strokeColor('black').out().spin(saw())
+```
+
 ## Grouping and cloning nodes
 
 Nodes can be grouped and transformations can be applied to the whole group:
