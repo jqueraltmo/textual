@@ -4,6 +4,7 @@ import { Node } from './Node.js';
 import { expandEmojis } from "./emoji.js";
 import { hackString } from "./hack-text.js";
 import { zalgo } from "./zalgo.js";
+import mulberry32 from "./mulberry32.js";
 
 export class TextNode extends Node {
     constructor(content, dispatch) {
@@ -24,6 +25,7 @@ export class TextNode extends Node {
         this.zalgoSeed = 0;
         this.hackProb = 0;
         this.hackSeed = 0;
+        this.dirParams = null;
     }
 
     clone(content) {
@@ -56,10 +58,10 @@ export class TextNode extends Node {
     }
 
     sp(px = 4) { this.tracking = px; return this; }
-    spacing(px = 4) { return this.sp(px); }
+    spacing(...args) { return this.sp(...args); }
 
     wsp(px = 8) { this._wordSpacing = px; return this; }
-    wordspacing(px = 8) { return this.wsp(px); }
+    wordspacing(...args) { return this.wsp(...args); }
 
     stretch(v = -0.5) { this._stretch = v; return this; }
 
@@ -76,6 +78,12 @@ export class TextNode extends Node {
         this.hackSeed = seed;
         return this;
     }
+
+    dir(l = 0, p = 1, s = 0) {
+        this.dirParams = { l, p, s };
+        return this;
+    }
+    direction(...args) { return this.dir(...args); }
 
     _drawSelf(env) {
         const ctx = env.ctx;
@@ -102,6 +110,18 @@ export class TextNode extends Node {
 
         const text = this._resolveText();
         const lines = text.split("\n");
+
+        // Apply direction effect per line, if enabled.
+        let processedLines = lines;
+        if (this.dirParams) {
+            const { l, p, s } = this.dirParams;
+            const pValue = p?.valueOf?.() ?? p;
+            const lValue = l?.valueOf?.() ?? l;
+            processedLines = lines.map(line =>
+                TextNode._applyDir(line, lValue, pValue, s)
+            );
+        }
+
         const totalHeight = lines.length * lineHeight;
         const startY = -(totalHeight / 2) + (lineHeight / 2);
 
@@ -118,8 +138,8 @@ export class TextNode extends Node {
             ctx.fillStyle = this._fillColor;
         }
 
-        for (let i = 0; i < lines.length; i++) {
-            draw(lines[i], 0, startY + i * lineHeight);
+        for (let i = 0; i < processedLines.length; i++) {
+            draw(processedLines[i], 0, startY + i * lineHeight);
         }
     }
 
@@ -174,5 +194,44 @@ export class TextNode extends Node {
         const clamped = Math.max(-1, Math.min(1, v));
         const i = Math.round((clamped + 1) / 2 * (STEPS.length - 1));
         return STEPS[i];
+    }
+
+    static _applyDir(text, l, p, seed) {
+        const rand = mulberry32(seed);
+        const chars = [...text];
+        const n = chars.length;
+        const size = Math.round(l > 0 ? l : n + l);
+        if (size <= 1 || p <= 0) return text;
+        const prob = p > 1 ? 1 : p;
+
+        const used = new Array(n).fill(false);
+        const fromRight = l < 0;
+
+        const indices = fromRight
+            ? [...Array(n).keys()].reverse()
+            : [...Array(n).keys()];
+
+        for (const i of indices) {
+            if (used[i]) continue;
+            if (rand() >= prob) continue;
+
+            let start, end;
+            if (fromRight) {
+                start = Math.max(0, i - size + 1);
+                end = i;
+            } else {
+                start = i;
+                end = Math.min(n - 1, i + size - 1);
+            }
+
+            const len = end - start + 1;
+            for (let k = 0; k < Math.floor(len / 2); k++) {
+                [chars[start + k], chars[end - k]] =
+                    [chars[end - k], chars[start + k]];
+            }
+            for (let k = start; k <= end; k++) used[k] = true;
+        }
+
+        return chars.join("");
     }
 }

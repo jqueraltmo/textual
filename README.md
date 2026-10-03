@@ -157,6 +157,31 @@ text('Textual').caps().out()
 text('Textual').caps(sqr(.2)).out()
 ```
 
+Direction:
+
+Change the direction of the text or parts of it.
+
+Arguments: `dir(l=0, p=1, s=0)`
+
+- `l`: Length of the inverted segments. Default 0. 0 is length of the text, `l` positive is the length of the segment, `l` negative is the length of the segment, counting from the total length. Also, for `l` postive, segments are tested from left to right, and for `l` negative, segments are tested from right to left.
+- `p`: Probability of inverting each segment. Default 1.
+- `s`: Random seed.
+
+```js
+text('textual').dir().out()           // all text inverted: lautxet
+text('textual').dir(0,.5).out()       // invert a group of 7 (length) characters. Each character has 50% to be the first. 
+text('textual').dir(2).out()          // invert groups of 2 characters: ettxaul
+text('textual').dir(-1).out()         // invert all characters except one
+text('textual').dir(-5).out()         // invert groups of 2 characters (length 7-5=2), from the right: txeutla
+text('textual').dir(2,.2).out()       // 20% of probability for each inversion
+text('textual').dir(2, .5, time).out() // 50%, change random seed with time
+text('textual').dir(2, osc(), time).out() // Change probability and seed over time. When osc() is negative, the text is stable
+text('textual').dir(2, unipolar(osc()), 6).out() // Custom seed, gradual change.
+text('textual').dir(remap(osc(.1), -6, 6)).out() // Change length of inverted groups and direction over time
+```
+
+`dir` and `direction` are synonyms.
+
 ## Transformations
 
 These transformations can be applied to any element.
@@ -358,7 +383,7 @@ curve(1, 0, osc(.2)).fill().fillColor("red").stroke(0).out()
 curve(1, 0, osc(.2)).fill().color("red").stroke(12).out() // both are red
 ```
 
-sCurve/scurve:
+S-shaped curve:
 
 An S-shaped curve with origin (0,0). The first two arguments are the end point, and the third is the bend.
 
@@ -366,10 +391,12 @@ An S-shaped curve with origin (0,0). The first two arguments are the end point, 
 scurve(1, 0).out()
 scurve(1, 0.5, 0.3).out()
 scurve(1, 0, 0.5).color("cyan").stroke(4).out()
-sCurve(1, 0, osc(0.5) + 0.5).out()
-sCurve(1, 0, seq(0.2, 0.5, 1).smooth()).out()
-sCurve(1, 0, 0.5).spin(time).out()
+scurve(1, 0, osc(0.5) + 0.5).out()
+scurve(1, 0, seq(0.2, 0.5, 1).smooth()).out()
+scurve(1, 0, 0.5).spin(time).out()
 ```
+
+`scurve` and `sCurve` are synonyms. Default values are 1, 0 and 0.
 
 Bézier:
 
