@@ -3,6 +3,7 @@
 // Based on https://github.com/geikha/text-hacker/ . Thank you GEIKHA!
 
 import mulberry32 from "./mulberry32.js";
+import { toGraphemes } from "./graphemes.js";
 
 const LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -258,7 +259,7 @@ function getCharWeight(ch) {
 export function hackString(text, prob = .3, seed = 0) {
     const rand = mulberry32(seed);
     let out = "";
-    for (let ch of text) {
+    for (const ch of toGraphemes(text)) {
         if (rand() <= prob) {
             const baseCh = baseChar(ch);
             const weight = getCharWeight(baseCh);

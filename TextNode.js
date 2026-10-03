@@ -5,6 +5,7 @@ import { expandEmojis } from "./emoji.js";
 import { hackString } from "./hack-text.js";
 import { zalgo } from "./zalgo.js";
 import mulberry32 from "./mulberry32.js";
+import { toGraphemes } from "./graphemes.js";
 
 export class TextNode extends Node {
     constructor(content, dispatch) {
@@ -26,6 +27,7 @@ export class TextNode extends Node {
         this.hackProb = 0;
         this.hackSeed = 0;
         this.dirParams = null;
+        this._vertical = 0;
     }
 
     clone(content) {
@@ -84,6 +86,8 @@ export class TextNode extends Node {
         return this;
     }
     direction(...args) { return this.dir(...args); }
+
+    vertical(on = 1) { this._vertical = on; return this; }
 
     _drawSelf(env) {
         const ctx = env.ctx;
@@ -167,6 +171,7 @@ export class TextNode extends Node {
         let text = raw === undefined || raw === null ? "" : String(raw);
 
         if (text.indexOf(":") !== -1) text = expandEmojis(text);
+        if (this._vertical > 0) text = TextNode._transpose(text);
         if (this.hackProb > 0) text = hackString(text, this.hackProb, this.hackSeed);
         if (this.zalgoIntensity > 0) text = zalgo(text, this.zalgoIntensity, this.zalgoSeed);
 
@@ -198,7 +203,7 @@ export class TextNode extends Node {
 
     static _applyDir(text, l, p, seed) {
         const rand = mulberry32(seed);
-        const chars = [...text];
+        const chars = toGraphemes(text);
         const n = chars.length;
         const size = Math.round(l > 0 ? l : n + l);
         if (size <= 1 || p <= 0) return text;
@@ -233,5 +238,21 @@ export class TextNode extends Node {
         }
 
         return chars.join("");
+    }
+
+    static _transpose(text) {
+        const lines = text.split("\n");
+        const grids = lines.map(l => toGraphemes(l));
+        const maxLen = Math.max(...grids.map(g => g.length));
+        for (const g of grids) {
+            while (g.length < maxLen) g.push(" ");
+        }
+        const out = [];
+        for (let col = 0; col < maxLen; col++) {
+            let row = "";
+            for (let r = 0; r < grids.length; r++) row += grids[r][col];
+            out.push(row);
+        }
+        return out.join("\n");
     }
 }
