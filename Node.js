@@ -110,8 +110,17 @@ export class Node {
     }
 
     composite(mode = "source-over") {
-        if (!VALID_COMPOSITE_MODES.has(mode)) {
-            throw new Error(`Unknown composite mode: ${mode}`);
+        if (mode?.values) {
+            for (const v of mode.values()) {
+                if (!VALID_COMPOSITE_MODES.has(v)) {
+                    throw new Error(`Unknown composite mode: ${v}`);
+                }
+            }
+        } else {
+            const resolved = mode?.valueOf?.() ?? mode;
+            if (!VALID_COMPOSITE_MODES.has(resolved)) {
+                throw new Error(`Unknown composite mode: ${resolved}`);
+            }
         }
         this.compositeMode = mode;
         return this;
@@ -134,9 +143,12 @@ export class Node {
             ctx.shadowOffsetX = this.shadowOffsetX;
             ctx.shadowOffsetY = this.shadowOffsetY;
             if (this.compositeMode) {
-                ctx.globalCompositeOperation = this.compositeMode;
+                const mode = this.compositeMode?.valueOf?.() ?? this.compositeMode;
+                if (!VALID_COMPOSITE_MODES.has(mode)) {
+                    throw new Error(`Unknown composite mode: ${mode}`);
+                }
+                ctx.globalCompositeOperation = mode;
             }
-            this._drawSelf(env);
             this._drawSelf(env);
         } finally {
             ctx.restore();
