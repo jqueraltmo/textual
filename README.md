@@ -182,6 +182,16 @@ text('textual').dir(remap(osc(.1), -6, 6)).out() // Change length of inverted gr
 
 `dir` and `direction` are synonyms.
 
+Mono:
+
+Converts emojis into their respective text characters, whenever they exist.
+
+```js
+text(':heart').mono().out()
+text(':heart').mono(osc()).out()
+text(':heart').mono().color("cyan").out()
+```
+
 ## Transformations
 
 These transformations can be applied to any element.

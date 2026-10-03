@@ -28,6 +28,7 @@ export class TextNode extends Node {
         this.hackSeed = 0;
         this.dirParams = null;
         this._vertical = 0;
+        this._mono = 0;
     }
 
     clone(content) {
@@ -88,6 +89,8 @@ export class TextNode extends Node {
     direction(...args) { return this.dir(...args); }
 
     vertical(on = 1) { this._vertical = on; return this; }
+
+    mono(on = 1) { this._mono = on; return this; }
 
     _drawSelf(env) {
         const ctx = env.ctx;
@@ -171,6 +174,7 @@ export class TextNode extends Node {
         let text = raw === undefined || raw === null ? "" : String(raw);
 
         if (text.indexOf(":") !== -1) text = expandEmojis(text);
+        if (this._mono > 0) text = text.replace(/\uFE0F/g, "\uFE0E");
         if (this._vertical > 0) text = TextNode._transpose(text);
         if (this.hackProb > 0) text = hackString(text, this.hackProb, this.hackSeed);
         if (this.zalgoIntensity > 0) text = zalgo(text, this.zalgoIntensity, this.zalgoSeed);
