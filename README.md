@@ -461,6 +461,34 @@ group(
 ).spin(time/2).out()
 ```
 
+## Composition
+
+Sets the type of compositing operation to apply when drawing the node.
+
+Options are documented here: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation
+
+```js
+fb(0.9);
+text(":heart").size(200).composite("lighter").move(osc(0.3), 0).out()
+
+text("textual").size(300).out()
+  .clone().size(280).composite("multiply").color("#333").out()
+
+text("textual").color("gray").size(300).out()
+  .clone().size(280).composite("multiply").out()
+
+text("textual").font('courier').sp(20).out()
+  .clone().size(55).composite("destination-out").out()
+
+fb(1)
+group(
+    text(":sun").move(osc(.13)/5, 0),
+    text(":moon").move(osc(-.13)/5, 0),
+).spin(saw(.1)).composite("difference").out()
+```
+
+`composite` and `comp` are synonyms.
+
 ## Using Textual with Punctual
 
 In Estuary, use two cells: one for Punctual and one for Textual.

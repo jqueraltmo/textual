@@ -109,6 +109,15 @@ export class Node {
         return this;
     }
 
+    composite(mode = "source-over") {
+        if (!VALID_COMPOSITE_MODES.has(mode)) {
+            throw new Error(`Unknown composite mode: ${mode}`);
+        }
+        this.compositeMode = mode;
+        return this;
+    }
+    comp(...args) { return this.composite(...args); }
+
     draw(env) {
         const px = this.x * env.width / 2;
         const py = -this.y * env.height / 2;
@@ -124,6 +133,10 @@ export class Node {
             ctx.shadowBlur = this.shadowBlur;
             ctx.shadowOffsetX = this.shadowOffsetX;
             ctx.shadowOffsetY = this.shadowOffsetY;
+            if (this.compositeMode) {
+                ctx.globalCompositeOperation = this.compositeMode;
+            }
+            this._drawSelf(env);
             this._drawSelf(env);
         } finally {
             ctx.restore();
@@ -138,3 +151,13 @@ export class Node {
         if (this.customTransform) this.customTransform(env.ctx);
     }
 }
+
+const VALID_COMPOSITE_MODES = new Set([
+    "source-over", "source-in", "source-out", "source-atop",
+    "destination-over", "destination-in", "destination-out", "destination-atop",
+    "lighter", "copy", "xor",
+    "multiply", "screen", "overlay", "darken", "lighten",
+    "color-dodge", "color-burn", "hard-light", "soft-light",
+    "difference", "exclusion",
+    "hue", "saturation", "color", "luminosity"
+]);
