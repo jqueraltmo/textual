@@ -16,6 +16,11 @@ export class GroupNode extends Node {
     }
 
     _drawSelf(env) {
+        const ctx = env.ctx;
+        const styles = this._resolveStyles(ctx, env);
+        if (styles.fill !== null) ctx.fillStyle = styles.fill;
+        if (styles.stroke !== null) ctx.strokeStyle = styles.stroke;
+
         for (const child of this.children) {
             child.draw(env);
         }

@@ -1,10 +1,10 @@
 'use strict';
 
+import { Gradient } from './Gradient.js';
+
 export class Node {
     constructor(dispatch) {
         this._dispatch = dispatch;
-        this._fillColor = "#ffffff";
-        this._strokeColor = "#ffffff";
         this.lineWidth = 2;
         this.shadowOffsetX = 0;
         this.shadowOffsetY = 0;
@@ -17,6 +17,10 @@ export class Node {
         this.customTransform = null;
         this.rotation = 0;
         this.customMatrix = null;
+        this._fillColor = null;
+        this._strokeColor = null;
+        this._gradient = null;
+        this._gradient = null;
     }
 
     out(destination = "") {
@@ -126,6 +130,37 @@ export class Node {
         return this;
     }
     comp(...args) { return this.composite(...args); }
+
+    grlin(x1 = -1, y1 = 0, x2 = 1, y2 = 0, ...colors) {
+        this._gradient = new Gradient("linear", [x1, y1, x2, y2], colors);
+        return this;
+    }
+
+    grrad(x = 0, y = 0, r = 1, ...colors) {
+        this._gradient = new Gradient("radial", [x, y, r], colors);
+        return this;
+    }
+
+    grconic(angle = 0, x = 0, y = 0, ...colors) {
+        this._gradient = new Gradient("conic", [angle, x, y], colors);
+        return this;
+    }
+
+    stop(...stops) {
+        if (!this._gradient) {
+            throw new Error("stop() requires a gradient; call grlin, grrad or grconic first");
+        }
+        this._gradient.stops = stops;
+        return this;
+    }
+
+    _resolveStyles(ctx, env) {
+        if (this._gradient) {
+            const cg = this._gradient._toCanvasGradient(ctx, env);
+            return { fill: cg, stroke: cg };
+        }
+        return { fill: this._fillColor, stroke: this._strokeColor };
+    }
 
     draw(env) {
         const px = this.x * env.width / 2;

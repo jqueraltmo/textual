@@ -136,13 +136,14 @@ export class TextNode extends Node {
             ? (s, x, y) => ctx.strokeText(s, x, y)
             : (s, x, y) => ctx.fillText(s, x, y);
 
+        const styles = this._resolveStyles(ctx, env);
         if (this.renderMode === "stroke") {
-            ctx.strokeStyle = this._strokeColor;
+            if (styles.stroke !== null) ctx.strokeStyle = styles.stroke;
             ctx.lineWidth = this.lineWidth;
             ctx.lineJoin = "round";
             ctx.lineCap = "round";
         } else {
-            ctx.fillStyle = this._fillColor;
+            if (styles.fill !== null) ctx.fillStyle = styles.fill;
         }
 
         for (let i = 0; i < processedLines.length; i++) {

@@ -38,12 +38,14 @@ export class RectNode extends Node {
         ctx.beginPath();
         ctx.rect(x, y, w, h);
 
+        const styles = this._resolveStyles(ctx, env);
+
         if (this._fill) {
-            ctx.fillStyle = this._fillColor;
+            if (styles.fill !== null) ctx.fillStyle = styles.fill;
             ctx.fill();
         }
         if (this._stroke) {
-            ctx.strokeStyle = this._strokeColor;
+            if (styles.stroke !== null) ctx.strokeStyle = styles.stroke;
             ctx.lineWidth = this.lineWidth;
             ctx.lineJoin = "round";
             ctx.lineCap = "round";

@@ -123,6 +123,8 @@ export class CanvasRenderer {
             ctx.scale(dpr, dpr);
             ctx.translate(env.width / 2, env.height / 2);
             ctx.globalAlpha = brightness;
+            ctx.fillStyle = "#ffffff";
+            ctx.strokeStyle = "#ffffff";
             for (const node of nodes) {
                 node.draw(env);
             }

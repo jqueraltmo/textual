@@ -78,12 +78,14 @@ export class BezierNode extends Node {
             ctx.bezierCurveTo(...toLocal(cp1), ...toLocal(cp2), ...toLocal(end));
         }
 
+        const styles = this._resolveStyles(ctx, env);
+
         if (this._fill) {
-            ctx.fillStyle = this._fillColor;
+            if (styles.fill !== null) ctx.fillStyle = styles.fill;
             ctx.fill();
         }
         if (this._stroke) {
-            ctx.strokeStyle = this._strokeColor;
+            if (styles.stroke !== null) ctx.strokeStyle = styles.stroke;
             ctx.lineWidth = this.lineWidth;
             ctx.lineJoin = "round";
             ctx.lineCap = "round";

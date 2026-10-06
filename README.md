@@ -450,6 +450,11 @@ group(
     text('textual').color('red'),
     sCurve(1,0,.6).move(-.5,0)
 ).spin(time/2).move(osc(.14)/2).out()
+
+group(
+    rect().stroke(10),
+    text('textual')
+).color('gray').out()
 ```
 
 Nodes can also be cloned:
@@ -503,6 +508,50 @@ group(
 ```
 
 `composite` and `comp` are synonyms.
+
+## Gradients
+
+Apply any gradient to any node.
+
+Linear gradient:
+
+```js
+rect().fill().grlin().out()
+rect().fill().grlin(-1,-1,1,1,'red','black').out()
+rect().fill().grlin(0,1,0,-1,[0,.8,0],[1,0,0.8]).out()
+
+group(
+    rect().fill().spin(saw(.02)),
+    rect().fill().move(osc(.03),.3)
+).grlin(-.7,0,.7,0,'red','green','orange').composite('difference').out()
+```
+
+Creates a gradient along the line connecting two given coordinates (first 4 arguments). Any number of colors can be used.
+
+Defaults: `grlin(x1 = -1, y1 = 0, x2 = 1, y2 = 0, 'white', 'transparent')`
+
+Radial gradient:
+
+```js
+rect().fill().grrad().out()
+rect().fill().grrad(osc(.19),osc(.12),1.5,'purple','blue').out()
+```
+
+Creates a radiant gradient with given center and radius.
+
+Defaults: `grrad(x = 0, y = 0, r = 1, 'white', 'transparent')`
+
+Conic gradient:
+
+```js
+rect().fill().grconic().out()
+rect(2,2).fill().grconic(Math.PI*saw(.1), 0,0).out()
+rect().fill().grconic(0, 0.5,0, 'red','green').out()
+```
+
+Creates a conic gradient with given initial angle and center.
+
+Defaults: `grconic(angle = 0, x = 0, y = 0, 'white', 'transparent')`
 
 ## Using Textual with Punctual
 
