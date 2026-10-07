@@ -481,6 +481,24 @@ group(
 ).spin(time/2).out()
 ```
 
+You can also create a group of related nodes in a single line:
+
+```js
+swarm(text('textual').stroke(), {size: [100, 200, 300]}).out();
+swarm(rect(), {spin: [.25, .5, .75, 1], color: ['red', 'blue', 'purple']}).out();
+
+swarm(
+    text(':fire').spin(saw(-.1)),
+    {size: [50, 100, 150], move: [[-0.2, 0], [0, 0], [0.3, 0]]},
+).spin(saw(.1)).out();
+
+const t = swarm(
+    text('textual').stroke().size(80),
+    {direction:[1,0],move: [[-0.2, 0], [0.2, 0]]}
+);
+swarm(t, {move: [[0,.5],[0,0],[0,-.5]]}).out();
+```
+
 ## Composition
 
 Sets the type of compositing operation to apply when drawing the node.

@@ -14,7 +14,7 @@ export function compile(code) {
     return new Function(
         "group", "text", "bezier", "curve", "sCurve", "scurve", "rect", "fb", "time", "cps", "beat",
         "osc", "phasor", "tri", "saw", "sqr", "unipolar", "bipolar", "remap", "linlin",
-        "seq",
+        "seq", "swarm",
         `"use strict";\n${code}`
     );
 }
@@ -120,7 +120,36 @@ export function run(compiled, time, tempo) {
         return api;
     }
 
-    compiled(group, text, bezier, curve, sCurve, sCurve, rect, fb, t, cps, beat, osc, phasor, tri, saw, sqr, unipolar, bipolar, remap, linlin, seq);
+    const swarm = (base, variants = {}) => {
+        const entries = Object.entries(variants).map(([prop, vals]) => [
+            prop,
+            Array.isArray(vals) ? vals : [vals],
+        ]).filter(([, vals]) => vals.length > 0);
+        if (entries.length === 0) {
+            return new GroupNode(dispatch, [base.clone()]);
+        }
+
+        const maxLen = Math.max(...entries.map(([, vals]) => vals.length));
+        const children = [];
+
+        for (let i = 0; i < maxLen; i++) {
+            const copy = base.clone();
+            for (const [prop, rawVals] of entries) {
+                if (typeof copy[prop] !== "function") {
+                    throw new Error(`swarm: "${prop}" is not a method on the node`);
+                }
+                const vals = Array.isArray(rawVals) ? rawVals : [rawVals];
+                const v = vals[i % vals.length];
+                const args = Array.isArray(v) ? v : [v];
+                copy[prop](...args);
+            }
+            children.push(copy);
+        }
+
+        return new GroupNode(dispatch, children);
+    };
+
+    compiled(group, text, bezier, curve, sCurve, sCurve, rect, fb, t, cps, beat, osc, phasor, tri, saw, sqr, unipolar, bipolar, remap, linlin, seq, swarm);
 
     return { outputs, feedback };
 }
