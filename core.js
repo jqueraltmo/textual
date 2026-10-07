@@ -6,13 +6,14 @@ import { CurveNode } from "./CurveNode.js";
 import { SCurveNode } from "./SCurveNode.js";
 import { GroupNode } from "./GroupNode.js";
 import { RectNode } from "./RectNode.js";
+import { EllipseNode } from "./EllipseNode.js";
 
 /**
  * Compiles user code into a function. Called once per define.
  */
 export function compile(code) {
     return new Function(
-        "group", "text", "bezier", "curve", "sCurve", "scurve", "rect", "fb", "time", "cps", "beat",
+        "group", "text", "bezier", "curve", "sCurve", "scurve", "rect", "ellipse", "circle", "fb", "time", "cps", "beat",
         "osc", "phasor", "tri", "saw", "sqr", "unipolar", "bipolar", "remap", "linlin",
         "seq", "swarm",
         `"use strict";\n${code}`
@@ -45,6 +46,8 @@ export function run(compiled, time, tempo) {
     const curve = (x, y, bend) => new CurveNode(dispatch, x, y, bend);
     const sCurve = (x, y, bend) => new SCurveNode(dispatch, x, y, bend);
     const rect = (x, y, w, h) => new RectNode(dispatch, x, y, w, h);
+    const ellipse = (rx, ry, sa, ea) => new EllipseNode(dispatch, rx, ry, sa, ea);
+    const circle = (r, sa, ea) => new EllipseNode(dispatch, r, r, sa, ea);
     const group = (...args) => new GroupNode(dispatch, ...args);
 
     const fb = (amount) => { feedback = amount; };
@@ -149,7 +152,8 @@ export function run(compiled, time, tempo) {
         return new GroupNode(dispatch, children);
     };
 
-    compiled(group, text, bezier, curve, sCurve, sCurve, rect, fb, t, cps, beat, osc, phasor, tri, saw, sqr, unipolar, bipolar, remap, linlin, seq, swarm);
+    compiled(group, text, bezier, curve, sCurve, sCurve, rect, ellipse, circle, fb, t, cps, beat, osc,
+        phasor, tri, saw, sqr, unipolar, bipolar, remap, linlin, seq, swarm);
 
     return { outputs, feedback };
 }

@@ -441,6 +441,23 @@ rect().spin(saw(.2)).out().fill()
 rect(.5,.5).color('cyan').fill().strokeColor('black').out().spin(saw())
 ```
 
+## Circles and ellipses
+
+Draw circles. Default values are 1 for radius, 0 for starting angle, and Math.PI*2 from ending angle.
+
+```js
+circle().out()
+circle(1, 0, 1.6).out()
+
+swarm(circle().fill(), {zoom:saw([1,.8,.6,.4,.2]), color:[[1,1,1,0.3]]}).out();
+```
+
+Draw ellipses. Default values are 1 for both radius, 0 for starting angle, and Math.PI*2 from ending angle.
+
+```js
+ellipse(.5,1,0,3.14).out()
+```
+
 ## Grouping and cloning nodes
 
 Nodes can be grouped and transformations can be applied to the whole group:
@@ -486,6 +503,7 @@ You can also create a group of related nodes in a single line:
 ```js
 swarm(text('textual').stroke(), {size: [100, 200, 300]}).out();
 swarm(rect(), {spin: [.25, .5, .75, 1], color: ['red', 'blue', 'purple']}).out();
+swarm(text('textual').size(200).color(1,0,1,0.4), {zoom: osc([.1,.14,.15])}).out();
 
 swarm(
     text(':fire').spin(saw(-.1)),
