@@ -35,6 +35,9 @@ export class Node {
     }
 
     move(x = 0, y = 0) {
+        if (Array.isArray(x)) {
+            [x = 0, y = 0] = x;
+        }
         this.x = x;
         this.y = y;
         return this;
@@ -81,6 +84,9 @@ export class Node {
     }
 
     zoom(zx = 1, zy = 1) {
+        if (Array.isArray(zx)) {
+            [zx = 1, zy = 1] = zx;
+        }
         this.zoomx = zx;
         this.zoomy = zy;
         return this;
