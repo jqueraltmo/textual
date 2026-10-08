@@ -104,14 +104,14 @@ export class EstuaryAdapter {
             const fallback = this.lastWorking.get(args.zone);
             if (!fallback) return [];
             try {
-                ({ outputs, feedback } = run(fallback, args.nowTime, this.tempo));
+                ({ outputs, feedback } = run(fallback, args.nowTime, this.tempo, this.renderer.aspect));
                 used = fallback;
             } catch (err) {
                 return [];
             }
         } else {
             try {
-                ({ outputs, feedback } = run(current, args.nowTime, this.tempo));
+                ({ outputs, feedback } = run(current, args.nowTime, this.tempo, this.renderer.aspect));
                 used = current;
                 this.errors.delete(args.zone);
             } catch (err) {
@@ -120,7 +120,7 @@ export class EstuaryAdapter {
                 const fallback = this.lastWorking.get(args.zone);
                 if (!fallback) return [];
                 try {
-                    ({ outputs, feedback } = run(fallback, args.nowTime, this.tempo));
+                    ({ outputs, feedback } = run(fallback, args.nowTime, this.tempo, this.renderer.aspect));
                     used = fallback;
                 } catch (err2) {
                     return [];

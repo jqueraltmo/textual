@@ -64,7 +64,7 @@ export class BezierNode extends Node {
 
     _drawSelf(env) {
         const ctx = env.ctx;
-        const toLocal = (p) => [p[0] * env.width / 2, -p[1] * env.height / 2];
+        const toLocal = (p) => [p[0] * env.sx, -p[1] * env.sy]
 
         const [start, ...rest] = this.points;
         ctx.beginPath();

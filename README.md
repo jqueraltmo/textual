@@ -589,6 +589,24 @@ Creates a conic gradient with given initial angle and center.
 
 Defaults: `grconic(angle = 0, x = 0, y = 0, 'white', 'transparent')`
 
+## Aspect ratio
+
+You can change the aspect ratio used by any shape (all nodes, except for text).
+
+`aspect` is the current aspect ratio of the canvas.
+
+`fit()` can be used to change the local aspect ration for a node or group of nodes.
+
+```js
+circle().fit().out()  // Corrects distorsion, perfectly round circle
+circle().fit(1).out() // Same
+circle().fit(aspect).out()  // Same as not specifying any fit. Circle fits the canvas
+circle().fit(aspect/2).out()  // Circle fills half the width of the canvas
+
+swarm(rect(2,2).fill().fit(aspect/2), {color: ['red', 'orange'], move: [[-1,0],[1,0]]}).out();
+circle().fit(unipolar(osc())).out();
+```
+
 ## Using Textual with Punctual
 
 In Estuary, use two cells: one for Punctual and one for Textual.

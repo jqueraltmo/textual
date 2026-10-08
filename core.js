@@ -13,7 +13,8 @@ import { EllipseNode } from "./EllipseNode.js";
  */
 export function compile(code) {
     return new Function(
-        "group", "text", "bezier", "curve", "sCurve", "scurve", "rect", "ellipse", "circle", "fb", "time", "cps", "beat",
+        "group", "text", "bezier", "curve", "sCurve", "scurve", "rect", "ellipse", "circle",
+        "fb", "time", "cps", "beat", "aspect",
         "osc", "phasor", "tri", "saw", "sqr", "unipolar", "bipolar", "remap", "linlin",
         "seq", "swarm",
         `"use strict";\n${code}`
@@ -28,7 +29,7 @@ function lift(fn) {
  * Runs compiled code with the given time, returning the outputs.
  * Called every frame.
  */
-export function run(compiled, time, tempo) {
+export function run(compiled, time, tempo, aspect) {
     const outputs = new Map();
     let feedback = 0;
 
@@ -152,7 +153,7 @@ export function run(compiled, time, tempo) {
         return new GroupNode(dispatch, children);
     };
 
-    compiled(group, text, bezier, curve, sCurve, sCurve, rect, ellipse, circle, fb, t, cps, beat, osc,
+    compiled(group, text, bezier, curve, sCurve, sCurve, rect, ellipse, circle, fb, t, cps, beat, aspect, osc,
         phasor, tri, saw, sqr, unipolar, bipolar, remap, linlin, seq, swarm);
 
     return { outputs, feedback };

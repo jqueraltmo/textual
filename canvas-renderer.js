@@ -10,6 +10,7 @@ export class CanvasRenderer {
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d");
         this.streams = new Map(); // name -> { canvas, ctx, stream, active }
+        this.aspect = 1;
 
         this._onResize = () => this.resize();
         window.addEventListener("resize", this._onResize);
@@ -22,6 +23,7 @@ export class CanvasRenderer {
         const h = Math.floor(window.innerHeight * dpr);
         this.canvas.width = w;
         this.canvas.height = h;
+        this.aspect = w / h;
         for (const entry of this.streams.values()) {
             entry.canvas.width = this.canvas.width;
             entry.canvas.height = this.canvas.height;

@@ -30,8 +30,8 @@ export class RectNode extends Node {
         const ctx = env.ctx;
         const wNorm = this.w?.valueOf?.() ?? this.w;
         const hNorm = this.h?.valueOf?.() ?? this.h;
-        const w = wNorm * env.width / 2;
-        const h = hNorm * env.height / 2;
+        const w = wNorm * env.sx;
+        const h = hNorm * env.sy;
         const x = -w / 2;
         const y = -h / 2;
 

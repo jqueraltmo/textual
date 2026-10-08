@@ -32,8 +32,8 @@ export class EllipseNode extends Node {
         const ctx = env.ctx;
         const radiusXNorm = this.radiusX?.valueOf?.() ?? this.radiusX;
         const radiusYNorm = this.radiusY?.valueOf?.() ?? this.radiusY;
-        const radiusX = radiusXNorm * env.width / 2;
-        const radiusY = radiusYNorm * env.height / 2;
+        const radiusX = radiusXNorm * env.sx;
+        const radiusY = radiusYNorm * env.sy;
         const startAngle = this.startAngle?.valueOf?.() ?? this.startAngle;
         const endAngle = this.endAngle?.valueOf?.() ?? this.endAngle;
 

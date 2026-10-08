@@ -19,8 +19,8 @@ export class Gradient {
     }
 
     _toCanvasGradient(ctx, env) {
-        const w = env.width / 2;
-        const h = env.height / 2;
+        const w = env.sx;
+        const h = env.sy;
 
         let cg;
         if (this.type === "linear") {

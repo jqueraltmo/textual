@@ -5,6 +5,7 @@ import { Gradient } from './Gradient.js';
 export class Node {
     constructor(dispatch) {
         this._dispatch = dispatch;
+        this._fit = null;
         this.lineWidth = 2;
         this.shadowOffsetX = 0;
         this.shadowOffsetY = 0;
@@ -26,6 +27,10 @@ export class Node {
     out(destination = "") {
         this._dispatch(this, destination);
         return this;
+    }
+
+    fit(v = 1) {
+        this._fit = v; return this;
     }
 
     clone() {
@@ -169,8 +174,19 @@ export class Node {
     }
 
     draw(env) {
-        const px = this.x * env.width / 2;
-        const py = -this.y * env.height / 2;
+        let sx = env.width / 2;
+        let sy = env.height / 2;
+
+        if (this._fit !== null) {
+            const f = this._fit?.valueOf?.() ?? this._fit;
+            sx = f * env.height / 2;
+        }
+
+        const px = this.x * sx;
+        const py = -this.y * sy;
+
+        const localEnv = { ...env, sx, sy };
+
         const ctx = env.ctx;
         ctx.save();
         try {
@@ -190,7 +206,7 @@ export class Node {
                 }
                 ctx.globalCompositeOperation = mode;
             }
-            this._drawSelf(env);
+            this._drawSelf(localEnv);
         } finally {
             ctx.restore();
         }
