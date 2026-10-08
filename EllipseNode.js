@@ -30,8 +30,8 @@ export class EllipseNode extends Node {
 
     _drawSelf(env) {
         const ctx = env.ctx;
-        const radiusXNorm = this.radiusX?.valueOf?.() ?? this.radiusX;
-        const radiusYNorm = this.radiusY?.valueOf?.() ?? this.radiusY;
+        const radiusXNorm = Math.abs(this.radiusX?.valueOf?.() ?? this.radiusX);
+        const radiusYNorm = Math.abs(this.radiusY?.valueOf?.() ?? this.radiusY);
         const radiusX = radiusXNorm * env.sx;
         const radiusY = radiusYNorm * env.sy;
         const startAngle = this.startAngle?.valueOf?.() ?? this.startAngle;
