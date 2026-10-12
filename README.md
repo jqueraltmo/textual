@@ -470,6 +470,21 @@ Draw ellipses. Default values are 1 for both radius, 0 for starting angle, and M
 ellipse(.5,1,0,3.14).out()
 ```
 
+## Images
+
+Use `img` to load images:
+
+```js
+const i = "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/64/Rain_Quail_in_Bhigwan_August_2025_by_Tisha_Mukherjee_13.jpg/1280px-Rain_Quail_in_Bhigwan_August_2025_by_Tisha_Mukherjee_13.jpg";
+img(i).out();
+```
+
+Images can only be loaded from servers that allow access from any place (`Access-Control-Allow-Origin: *`).
+
+Images are always displaied at their natural size. Note that this is not the same behaviour than Punctual, where images are scaled to fill the canvas. Use `zoom` to reescale the image.
+
+`fit` doesn't change the image size, only its position.
+
 ## Grouping and cloning nodes
 
 Nodes can be grouped and transformations can be applied to the whole group:
