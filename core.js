@@ -7,6 +7,7 @@ import { SCurveNode } from "./SCurveNode.js";
 import { GroupNode } from "./GroupNode.js";
 import { RectNode } from "./RectNode.js";
 import { EllipseNode } from "./EllipseNode.js";
+import { expandEmojis } from "./emoji.js";
 
 /**
  * Compiles user code into a function. Called once per define.
@@ -15,7 +16,7 @@ export function compile(code) {
     return new Function(
         "group", "text", "bezier", "curve", "sCurve", "scurve", "rect", "ellipse", "circle",
         "fb", "time", "cps", "beat", "aspect",
-        "osc", "phasor", "tri", "saw", "sqr", "unipolar", "bipolar", "remap", "linlin",
+        "osc", "phasor", "tri", "saw", "sqr", "unipolar", "bipolar", "remap", "linlin", "xt",
         "seq", "swarm",
         `"use strict";\n${code}`
     );
@@ -73,6 +74,7 @@ export function run(compiled, time, tempo, aspect) {
     const bipolar = lift(v => v * 2 - 1);
     const remap = lift((v, a, b) => a + (v + 1) * (b - a) / 2);
     const linlin = lift((v, a, b, c, d) => c + (v - a) * (d - c) / (b - a));
+    const xt = (s) => expandEmojis(String(s));
 
     const seq = (...args) => {
         const values = (args.length === 1 && Array.isArray(args[0])) ? args[0] : args;
@@ -154,7 +156,7 @@ export function run(compiled, time, tempo, aspect) {
     };
 
     compiled(group, text, bezier, curve, sCurve, sCurve, rect, ellipse, circle, fb, t, cps, beat, aspect, osc,
-        phasor, tri, saw, sqr, unipolar, bipolar, remap, linlin, seq, swarm);
+        phasor, tri, saw, sqr, unipolar, bipolar, remap, linlin, xt, seq, swarm);
 
     return { outputs, feedback };
 }

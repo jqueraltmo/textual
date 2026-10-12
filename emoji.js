@@ -18,10 +18,10 @@ export const EMOJI = {
     quintessence: "🜀",
     aether: "🜀",
     ether: "🜀",
-    air_sym: "🜁",
-    fire_sym: "🜂",
-    earth_sym: "🜃",
-    water_sym: "🜄",
+    "air-sym": "🜁",
+    "fire-sym": "🜂",
+    "earth-sym": "🜃",
+    "water-sym": "🜄",
 
     // ---------------------------------------------------------------
     // Zodiac signs
@@ -42,8 +42,8 @@ export const EMOJI = {
     // ---------------------------------------------------------------
     // Planets
     // ---------------------------------------------------------------
-    sun_sym: "☉",
-    moon_sym: "☾",
+    "sun-sym": "☉",
+    "moon-sym": "☾",
     mercury: "☿",
     venus: "♀",
     mars: "♂",
@@ -58,7 +58,7 @@ export const EMOJI = {
     // ---------------------------------------------------------------
     sulfur: "🜍",
     sulphur: "🜍",
-    mercury_sublimate: "🜐",
+    "mercury-sublimate": "🜐",
     salt: "🜔",
     nitre: "🜕",
     niter: "🜕",
@@ -71,7 +71,7 @@ export const EMOJI = {
     lead: "🜪",
     antimony: "🜫",
     arsenic: "🜺",
-    sal_ammoniac: "🜹",
+    "sal-ammoniac": "🜹",
 
     // ---------------------------------------------------------------
     // Everyday emojis
@@ -103,8 +103,26 @@ export const EMOJI = {
     snowman: "☃️",
     coffee: "☕",
     sun: "☀️",
+    "sun-face": "🌞",
     moon: "🌙",
-    earth: "🌍"
+    "moon-face": "🌝",
+    "moon-face-new": "🌚",
+    earth: "🌍",
+    rabbit: "🐇",
+    rainbon: "🌈",
+    wave: "🌊",
+
+    // ---------------------------------------------------------------
+    // Cycles
+    // ---------------------------------------------------------------
+    "moon-cycle": ["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"],
+    "metal-cycle": ["🜜", "🜠", "🜪", "🜩", "🜚", "🜛"],
+    "planets-cycle": ["♄", "♃", "♂", "☉", "♀", "☿", "☾"],
+    "zodiac-cycle": ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"],
+    "zodiac-fire-cycle": ["♈", "♌", "♐"],
+    "zodiac-earth-cycle": ["♉", "♍", "♑"],
+    "zodiac-air-cycle": ["♊", "♎", "♒"],
+    "zodiac-water-cycle": ["♋", "♏", "♓"],
 };
 
 const PATTERN = /:([a-z0-9_+-]+):?/gi;
@@ -113,8 +131,36 @@ const PATTERN = /:([a-z0-9_+-]+):?/gi;
  * Replaces :shortcode and :shortcode: with their emoji or symbol.
  * Unknown shortcodes are left untouched.
  */
-export function expandEmojis(text) {
-    return text.replace(PATTERN, (match, name) => {
-        return EMOJI[name.toLowerCase()] ?? match;
+function inlineExpand(s) {
+    return s.replace(PATTERN, (match, name) => {
+        const entry = EMOJI[name.toLowerCase()];
+        if (entry === undefined) return match;
+        if (Array.isArray(entry)) return entry.join("");
+        return entry;
     });
+}
+
+/**
+ * Replaces :shortcode and :shortcode: with their emoji or symbol.
+ * If the symbol is an array, creates an array of expansions.
+ * Only one cycle is allowed at this time. More than one cycle results
+ * in only one long array.
+ */
+export function expandEmojis(text) {
+    const s = String(text);
+    const matches = [...s.matchAll(PATTERN)];
+    const cycles = matches.filter(m => Array.isArray(EMOJI[m[1].toLowerCase()]));
+
+    if (cycles.length === 1) {
+        const [cycle] = cycles;
+        const values = EMOJI[cycle[1].toLowerCase()];
+        return values.map(value => {
+            const withValue = s.slice(0, cycle.index)
+                + value
+                + s.slice(cycle.index + cycle[0].length);
+            return inlineExpand(withValue);
+        });
+    }
+
+    return inlineExpand(s);
 }

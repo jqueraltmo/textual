@@ -371,6 +371,18 @@ text(":heart").size(seq(50, 100, 200).smooth()).out()        // Equivalent witho
 text('textual').color(seq([1,0,0],[0,1,0]).smooth()).out()   // Smooth works with arrays too
 ```
 
+## Text expansion
+
+`xt(':name')` returns the raw expansion of a shortcode. For simple shortcodes it behaves the same as `text(':name')`. Its real use is when the entry is a cycle: `xt(':moon-cycle')` returns the array of values, which you can then use with seq, index, or manipulate.
+
+```js
+text(xt(':moon_cycle')).out()             // 🌑🌒🌓🌔🌕🌖🌗🌘
+text(seq(xt(':moon_cycle'))).out()        // cycle through all emojis
+text(seq(xt(':sun :moon-cycle :sun'))).out()
+text(xt(':moon_cycle')[2]).out()          // 🌓
+text(seq(xt(':planets-cycle').reverse())).out()
+```
+
 ## Bézier curves
 
 Curve:

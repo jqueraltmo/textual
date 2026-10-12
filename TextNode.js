@@ -175,6 +175,7 @@ export class TextNode extends Node {
         let text = raw === undefined || raw === null ? "" : String(raw);
 
         if (text.indexOf(":") !== -1) text = expandEmojis(text);
+        if (Array.isArray(text)) text = text.join("");
         if (this._mono > 0) text = text.replace(/\uFE0F/g, "\uFE0E");
         if (this._vertical > 0) text = TextNode._transpose(text);
         if (this.hackProb > 0) text = hackString(text, this.hackProb, this.hackSeed);
