@@ -470,7 +470,7 @@ Draw ellipses. Default values are 1 for both radius, 0 for starting angle, and M
 ellipse(.5,1,0,3.14).out()
 ```
 
-## Images
+## Images and videos
 
 Use `img` to load images:
 
@@ -479,11 +479,22 @@ const i = "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/64/Rain_Quail_i
 img(i).out();
 ```
 
-Images can only be loaded from servers that allow access from any place (`Access-Control-Allow-Origin: *`).
+Images and videos can only be loaded from servers that allow access from any place (`Access-Control-Allow-Origin: *`).
 
-Images are always displaied at their natural size. Note that this is not the same behaviour than Punctual, where images are scaled to fill the canvas. Use `zoom` to reescale the image.
+Images and videos are always displaied at their natural size. Note that this is not the same behaviour than Punctual, where images are scaled to fill the canvas. Use `zoom` to reescale the image or video.
 
-`fit` doesn't change the image size, only its position.
+`fit` doesn't change the image or video size, only its position.
+
+```js
+const v = "https://upload.wikimedia.org/wikipedia/commons/f/f8/Bear_walking_at_Kaliningrad_Zoo.webm";
+vid(v).out();
+
+vid(v).rate(.2).out();
+vid(v).range(0,5).out();     // Loops only the 5 first seconds
+vid(v).loop(false).out();    // Reproduces the video once
+```
+
+`rate()` sets the playback speed. Values are taken as absolute; negative values are treated as positive because the browser doesn't support reverse playback. Use 0 to freeze the video.
 
 ## Grouping and cloning nodes
 

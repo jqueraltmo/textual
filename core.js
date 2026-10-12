@@ -8,6 +8,7 @@ import { GroupNode } from "./GroupNode.js";
 import { RectNode } from "./RectNode.js";
 import { EllipseNode } from "./EllipseNode.js";
 import { ImageNode } from "./ImageNode.js";
+import { VideoNode } from "./VideoNode.js";
 import { expandEmojis } from "./emoji.js";
 
 /**
@@ -15,7 +16,7 @@ import { expandEmojis } from "./emoji.js";
  */
 export function compile(code) {
     return new Function(
-        "group", "text", "bezier", "curve", "sCurve", "scurve", "rect", "ellipse", "circle", "img",
+        "group", "text", "bezier", "curve", "sCurve", "scurve", "rect", "ellipse", "circle", "img", "vid",
         "fb", "time", "cps", "beat", "aspect",
         "osc", "phasor", "tri", "saw", "sqr", "unipolar", "bipolar", "remap", "linlin", "xt",
         "seq", "swarm",
@@ -53,6 +54,7 @@ export function run(compiled, time, tempo, aspect) {
     const circle = (r, sa, ea) => new EllipseNode(dispatch, r, r, sa, ea);
     const group = (...args) => new GroupNode(dispatch, ...args);
     const img = (url) => new ImageNode(dispatch, url);
+    const vid = (url) => new VideoNode(dispatch, url);
 
     const fb = (amount) => { feedback = amount; };
 
@@ -157,7 +159,7 @@ export function run(compiled, time, tempo, aspect) {
         return new GroupNode(dispatch, children);
     };
 
-    compiled(group, text, bezier, curve, sCurve, sCurve, rect, ellipse, circle, img, fb, t, cps, beat, aspect, osc,
+    compiled(group, text, bezier, curve, sCurve, sCurve, rect, ellipse, circle, img, vid, fb, t, cps, beat, aspect, osc,
         phasor, tri, saw, sqr, unipolar, bipolar, remap, linlin, xt, seq, swarm);
 
     return { outputs, feedback };
