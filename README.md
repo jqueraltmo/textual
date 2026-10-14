@@ -510,6 +510,12 @@ group(
     rect().stroke(10),
     text('textual')
 ).color('gray').out()
+
+group(
+  rect(),
+  bezier(),
+  text('textual')
+).zalgo().out()    // zalgo is only applied to the text, where it makes sense
 ```
 
 Nodes can also be cloned:

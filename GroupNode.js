@@ -33,3 +33,30 @@ export class GroupNode extends Node {
         }
     }
 }
+
+const PROPAGATING = [
+    "zalgo", "hack", "text", "size", "font",
+    "sp", "spacing", "wsp", "wordspacing",
+    "stretch", "caps", "dir", "direction",
+    "fill", "stroke",
+    "rate", "loop", "range",
+];
+
+for (const name of PROPAGATING) {
+    GroupNode.prototype[name] = function (...args) {
+        let anyWorked = false;
+        for (const child of this.children) {
+            if (typeof child[name] !== "function") continue;
+            try {
+                child[name](...args);
+                anyWorked = true;
+            } catch (e) {
+                // Node base throws "not implemented"; ignore and try next.
+            }
+        }
+        if (!anyWorked) {
+            throw new Error(`Group.${name}: no child supports this method`);
+        }
+        return this;
+    };
+}
