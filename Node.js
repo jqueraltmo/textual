@@ -141,6 +141,7 @@ export class Node {
         return this;
     }
     comp(...args) { return this.composite(...args); }
+    compose(...args) { return this.composite(...args); }
 
     grlin(x1 = -1, y1 = 0, x2 = 1, y2 = 0, ...colors) {
         this._gradient = new Gradient("linear", [x1, y1, x2, y2], colors);

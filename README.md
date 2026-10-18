@@ -587,7 +587,7 @@ group(
 ).spin(saw(.1)).composite("difference").out()
 ```
 
-`composite` and `comp` are synonyms.
+`composite`, `compose` and `comp` are synonyms.
 
 ## Gradients
 
