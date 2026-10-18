@@ -17,6 +17,8 @@ export class Node {
         this.zoomy = 1;
         this.customTransform = null;
         this.rotation = 0;
+        this.orbitR = 0;
+        this.orbitPhase = 0;
         this.customMatrix = null;
         this._fillColor = null;
         this._strokeColor = null;
@@ -85,6 +87,12 @@ export class Node {
 
     spin(rotation = 0) {
         this.rotation = rotation * Math.PI;
+        return this;
+    }
+
+    orbit(radius = 0.5, phase = 0) {
+        this.orbitR = radius;
+        this.orbitPhase = phase;
         return this;
     }
 
@@ -175,18 +183,23 @@ export class Node {
     }
 
     draw(env) {
-        let sx = env.width / 2;
-        let sy = env.height / 2;
+        let sx = env.sx;
+        let sy = env.sy;
 
         if (this._fit !== null) {
             const f = this._fit?.valueOf?.() ?? this._fit;
             sx = f * env.height / 2;
+            sy = env.height / 2;
         }
 
-        const px = this.x * sx;
-        const py = -this.y * sy;
-
         const localEnv = { ...env, sx, sy };
+        const orbitR = this.orbitR?.valueOf?.() ?? this.orbitR ?? 0;
+        const orbitPhase = this.orbitPhase?.valueOf?.() ?? this.orbitPhase ?? 0;
+        const orbitX = orbitR * Math.cos(orbitPhase * Math.PI);
+        const orbitY = orbitR * Math.sin(orbitPhase * Math.PI);
+
+        const px = (this.x + orbitX) * sx;
+        const py = -(this.y + orbitY) * sy;
 
         const ctx = env.ctx;
         ctx.save();

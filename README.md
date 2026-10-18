@@ -238,6 +238,27 @@ text("textual").spin(time/4%2).out()
 
 In `spin()`, 1 equals PI radians.
 
+Note that `spin` always rotates the node around its center.
+
+Orbit:
+
+Rotates a node following an orbit around its position.
+
+```js
+text(':heart').move(.5,0).orbit(.2,saw(.5)).out()
+```
+
+```js
+const sun = text(':sun-face').size(100);
+
+const earthMoon = group(
+    text(':earth').size(50),
+    text(':moon-face').size(20).orbit(0.12, saw(.2))
+).orbit(0.5, saw(.04));
+
+group(sun, earthMoon).fit().move(remap(osc([.02,.03]),-.5,.5)).out();
+```
+
 Zoom:
 
 ```js

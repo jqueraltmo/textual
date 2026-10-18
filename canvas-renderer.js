@@ -113,11 +113,15 @@ export class CanvasRenderer {
 
         const { canvas, ctx } = t;
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const width = canvas.width / dpr;
+        const height = canvas.height / dpr;
         const env = {
             ctx,
-            width: canvas.width / dpr,
-            height: canvas.height / dpr,
+            width: width,
+            height: height,
             dpr,
+            sx: width / 2,
+            sy: height / 2,
         };
 
         ctx.save();
@@ -148,11 +152,15 @@ export class CanvasRenderer {
             this._testCtx = c.getContext("2d");
         }
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const width = this.canvas.width / dpr;
+        const height = this.canvas.height / dpr;
         const env = {
             ctx: this._testCtx,
-            width: this.canvas.width / dpr,
-            height: this.canvas.height / dpr,
+            width: width,
+            height: height,
             dpr,
+            sx: width / 2,
+            sy: height / 2,
         };
         for (const node of nodes) {
             node.dryRun(env);
