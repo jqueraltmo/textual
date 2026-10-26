@@ -272,6 +272,14 @@ Zoom:
 ```js
 text('textual').zoom(3,8).out()
 text('textual').zoom(seq(1,10).smooth(),1).out()
+text('textual').zoomx(5).out()
+text('textual').zoomy(-4).out()
+
+text('textual').stroke(.2),
+{
+  zoomx: range(2,10),
+  zoomy: range(2,10)
+}).out();
 ```
 
 Arbitrary transformations:

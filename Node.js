@@ -13,8 +13,8 @@ export class Node {
         this.shadowColor = "#000000";
         this.x = 0;
         this.y = 0;
-        this.zoomx = 1;
-        this.zoomy = 1;
+        this._zoomx = 1;
+        this._zoomy = 1;
         this.customTransform = null;
         this.rotation = 0;
         this.orbitR = 0;
@@ -110,8 +110,18 @@ export class Node {
         if (Array.isArray(zx)) {
             [zx = 1, zy = 1] = zx;
         }
-        this.zoomx = zx;
-        this.zoomy = zy;
+        this._zoomx = zx;
+        this._zoomy = zy;
+        return this;
+    }
+
+    zoomx(zx = 1) {
+        this._zoomx = zx;
+        return this;
+    }
+
+    zoomy(zy = 0) {
+        this._zoomy = zy;
         return this;
     }
 
@@ -228,7 +238,7 @@ export class Node {
         try {
             ctx.translate(px, py);
             ctx.rotate(this.rotation);
-            ctx.scale(this.zoomx, this.zoomy);
+            ctx.scale(this._zoomx, this._zoomy);
             if (this.customMatrix) ctx.transform(...this.customMatrix);
             if (this.customTransform) this.customTransform(ctx);
             ctx.shadowColor = this.shadowColor;
