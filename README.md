@@ -203,7 +203,15 @@ text("Textual").move(-.4, .5).out()
 ```
 
 ```js
-text("Textual").move(-.4, .5*Math.sin(time)).out()
+text("Textual").move(-.4, .5*osc(.2)).out()
+```
+
+```js
+text('Textual').movex(.3).out()
+```
+
+```js
+text('Textual').movey(seq(.2,-.5,.8,0).slow(4).smooth()).out()
 ```
 
 Color:
@@ -390,6 +398,28 @@ The array form `seq([1, 2, 3])` is also accepted and is useful when the values c
 text(":heart").size(seq([50, 100, 200]).smooth()).out()      // Array form
 text(":heart").size(seq(50, 100, 200).smooth()).out()        // Equivalent without array
 text('textual').color(seq([1,0,0],[0,1,0]).smooth()).out()   // Smooth works with arrays too
+```
+
+## Ranges
+
+```js
+range(5) -> [0, 1, 2, 3, 4]
+range(30, 0, -10) -> [30, 20, 10]
+range(0, 2, 0.2) -> [0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8]
+range(2, 0, -0.5) -> [2, 1.5, 1, 0.5]
+```
+
+```js
+swarm(text(":heart"), { size: range(200, 50, -20) }).out();
+text('textual').size(seq(range(100,500,100))).out();
+
+swarm(text(":sun"), {
+    orbit: range(0.1, 0.9, 0.05).map(r => [r, r*beat])
+}).fit().out();
+
+swarm(rect(), {
+    spin: range(.1, 1, .1)
+}).fit().out()
 ```
 
 ## Text expansion
@@ -609,6 +639,21 @@ group(
 ```
 
 `composite`, `compose` and `comp` are synonyms.
+
+Valid options: "source-over", "lighter", "multiply", "screen", "difference", "exclusion", "overlay", "xor", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "destination-out", "destination-over", "destination-in", "destination-atop", "source-in", "source-out", "source-atop", "copy", "hue", "saturation", "color", "luminosity".
+
+Also accepts numbers as indexes from the valid options array:
+
+```js
+text("textual").size(300).out()
+  .clone().size(280).composite(5*saw()).color("#093").out();
+
+swarm(rect(),
+  {
+    spin: saw([-.2,.2])
+  }
+).fill().grrad(0,1,1,'red','blue').composite(seq(range(10)).slow(8)).out();
+```
 
 ## Gradients
 

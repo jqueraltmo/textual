@@ -19,7 +19,7 @@ export function compile(code) {
         "group", "text", "bezier", "curve", "sCurve", "scurve", "rect", "ellipse", "circle", "img", "vid",
         "fb", "time", "cps", "beat", "aspect",
         "osc", "phasor", "tri", "saw", "sqr", "unipolar", "bipolar", "remap", "linlin", "xt",
-        "seq", "swarm",
+        "seq", "swarm", "range",
         `"use strict";\n${code}`
     );
 }
@@ -159,8 +159,23 @@ export function run(compiled, time, tempo, aspect) {
         return new GroupNode(dispatch, children);
     };
 
+    const range = (start, stop, step = 1) => {
+        if (stop === undefined) { stop = start; start = 0; }
+        if (step === 0) return [];
+
+        // Exclusive stop.
+        const n = Math.ceil((stop - start) / step - 1e-9);
+        if (n <= 0) return [];
+
+        const out = new Array(n);
+        for (let i = 0; i < n; i++) {
+            out[i] = start + i * step;
+        }
+        return out;
+    };
+
     compiled(group, text, bezier, curve, sCurve, sCurve, rect, ellipse, circle, img, vid, fb, t, cps, beat, aspect, osc,
-        phasor, tri, saw, sqr, unipolar, bipolar, remap, linlin, xt, seq, swarm);
+        phasor, tri, saw, sqr, unipolar, bipolar, remap, linlin, xt, seq, swarm, range);
 
     return { outputs, feedback };
 }

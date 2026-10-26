@@ -50,6 +50,16 @@ export class Node {
         return this;
     }
 
+    movex(x = 0) {
+        this.x = x;
+        return this;
+    }
+
+    movey(y = 0) {
+        this.y = y;
+        return this;
+    }
+
     color(r = 1, g = 1, b = 1, a = 1) {
         const c = this._toColor(r, g, b, a);
         this._fillColor = c;
@@ -135,13 +145,15 @@ export class Node {
     composite(mode = "source-over") {
         if (mode?.values) {
             for (const v of mode.values()) {
-                if (!VALID_COMPOSITE_MODES.has(v)) {
+                const asString = this._resolveCompositeMode(v);
+                if (!VALID_COMPOSITE_MODES.includes(asString)) {
                     throw new Error(`Unknown composite mode: ${v}`);
                 }
             }
         } else {
             const resolved = mode?.valueOf?.() ?? mode;
-            if (!VALID_COMPOSITE_MODES.has(resolved)) {
+            const asString = this._resolveCompositeMode(resolved);
+            if (!VALID_COMPOSITE_MODES.includes(asString)) {
                 throw new Error(`Unknown composite mode: ${resolved}`);
             }
         }
@@ -150,6 +162,16 @@ export class Node {
     }
     comp(...args) { return this.composite(...args); }
     compose(...args) { return this.composite(...args); }
+
+    _resolveCompositeMode(mode) {
+        if (typeof mode === "string") return mode;
+        if (typeof mode === "number" && Number.isFinite(mode)) {
+            const len = VALID_COMPOSITE_MODES.length;
+            const i = Math.floor(mode);
+            return VALID_COMPOSITE_MODES[((i % len) + len) % len];
+        }
+        return mode;
+    }
 
     grlin(x1 = -1, y1 = 0, x2 = 1, y2 = 0, ...colors) {
         this._gradient = new Gradient("linear", [x1, y1, x2, y2], colors);
@@ -215,10 +237,11 @@ export class Node {
             ctx.shadowOffsetY = this.shadowOffsetY;
             if (this.compositeMode) {
                 const mode = this.compositeMode?.valueOf?.() ?? this.compositeMode;
-                if (!VALID_COMPOSITE_MODES.has(mode)) {
+                const asString = this._resolveCompositeMode(mode);
+                if (!VALID_COMPOSITE_MODES.includes(asString)) {
                     throw new Error(`Unknown composite mode: ${mode}`);
                 }
-                ctx.globalCompositeOperation = mode;
+                ctx.globalCompositeOperation = asString;
             }
             this._drawSelf(localEnv);
         } finally {
@@ -235,12 +258,11 @@ export class Node {
     }
 }
 
-const VALID_COMPOSITE_MODES = new Set([
-    "source-over", "source-in", "source-out", "source-atop",
-    "destination-over", "destination-in", "destination-out", "destination-atop",
-    "lighter", "copy", "xor",
-    "multiply", "screen", "overlay", "darken", "lighten",
+const VALID_COMPOSITE_MODES = [
+    "source-over", "lighter", "multiply", "screen", "difference",
+    "exclusion", "overlay", "xor", "darken", "lighten",
     "color-dodge", "color-burn", "hard-light", "soft-light",
-    "difference", "exclusion",
-    "hue", "saturation", "color", "luminosity"
-]);
+    "destination-out", "destination-over", "destination-in", "destination-atop",
+    "source-in", "source-out", "source-atop", "copy",
+    "hue", "saturation", "color", "luminosity",
+];
