@@ -207,6 +207,10 @@ text("Textual").move(-.4, .5*osc(.2)).out()
 ```
 
 ```js
+text('Textual').move(.1).out() // Move both x and y by 0.1
+```
+
+```js
 text('Textual').movex(.3).out()
 ```
 
@@ -272,6 +276,7 @@ Zoom:
 ```js
 text('textual').zoom(3,8).out()
 text('textual').zoom(seq(1,10).smooth(),1).out()
+text('textual').zoom(.5).out()  // scale both axes
 text('textual').zoomx(5).out()
 text('textual').zoomy(-4).out()
 

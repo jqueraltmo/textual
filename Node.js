@@ -41,10 +41,9 @@ export class Node {
         return copy;
     }
 
-    move(x = 0, y = 0) {
-        if (Array.isArray(x)) {
-            [x = 0, y = 0] = x;
-        }
+    move(x = 0, y) {
+        if (Array.isArray(x)) [x = 0, y] = x;
+        if (y === undefined) y = x;
         this.x = x;
         this.y = y;
         return this;
@@ -106,10 +105,9 @@ export class Node {
         return this;
     }
 
-    zoom(zx = 1, zy = 1) {
-        if (Array.isArray(zx)) {
-            [zx = 1, zy = 1] = zx;
-        }
+    zoom(zx = 1, zy) {
+        if (Array.isArray(zx)) [zx = 1, zy] = zx;
+        if (zy === undefined) zy = zx;
         this._zoomx = zx;
         this._zoomy = zy;
         return this;
