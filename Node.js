@@ -120,7 +120,7 @@ export class Node {
         return this;
     }
 
-    zoomy(zy = 0) {
+    zoomy(zy = 1) {
         this._zoomy = zy;
         return this;
     }
