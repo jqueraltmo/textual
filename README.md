@@ -551,6 +551,7 @@ vid(v).out();
 vid(v).rate(.2).out();
 vid(v).range(0,5).out();     // Loops only the 5 first seconds
 vid(v).loop(false).out();    // Reproduces the video once
+vid(v).start(5).out();       // Start from 5 seconds
 ```
 
 `rate()` sets the playback speed. Values are taken as absolute; negative values are treated as positive because the browser doesn't support reverse playback. Use 0 to freeze the video.

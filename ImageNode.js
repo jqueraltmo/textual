@@ -7,7 +7,6 @@ export class ImageNode extends Node {
     constructor(dispatch, url) {
         super(dispatch);
         this.url = url;
-        this._fit = 1;      // images default to uniform positioning
         this._image = null;
     }
 

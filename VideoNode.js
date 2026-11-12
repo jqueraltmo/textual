@@ -7,7 +7,6 @@ export class VideoNode extends Node {
     constructor(dispatch, url) {
         super(dispatch);
         this.url = url;
-        this._fit = 1;
         this._video = null;
         this._rangeStart = undefined;
         this._rangeEnd = null;
