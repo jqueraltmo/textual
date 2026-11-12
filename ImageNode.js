@@ -16,8 +16,8 @@ export class ImageNode extends Node {
         const { img, loaded, error } = this._image;
         if (!loaded || error) return;
 
-        const w = img.naturalWidth * this.zoomx;
-        const h = img.naturalHeight * this.zoomy;
+        const w = img.naturalWidth * this._zoomx;
+        const h = img.naturalHeight * this._zoomy;
 
         env.ctx.drawImage(img, -w / 2, -h / 2, w, h);
     }

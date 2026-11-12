@@ -64,8 +64,8 @@ export class VideoNode extends Node {
             video.play().catch(() => { });
         }
 
-        const w = video.videoWidth * this.zoomx;
-        const h = video.videoHeight * this.zoomy;
+        const w = video.videoWidth * this._zoomx;
+        const h = video.videoHeight * this._zoomy;
         env.ctx.drawImage(video, -w / 2, -h / 2, w, h);
     }
 
