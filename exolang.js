@@ -63,7 +63,7 @@ export class EstuaryAdapter {
         // Test run: catch runtime errors in the code itself, and draw
         // errors in resolveText / customTransform.
         try {
-            const { outputs } = run(compiled, 0, this.tempo);
+            const { outputs } = run(compiled, 0, this.tempo, this.renderer.aspect, 0, 0);
             for (const nodes of outputs.values()) {
                 this.renderer.dryRun(nodes);
             }
@@ -104,14 +104,18 @@ export class EstuaryAdapter {
             const fallback = this.lastWorking.get(args.zone);
             if (!fallback) return [];
             try {
-                ({ outputs, feedback } = run(fallback, args.nowTime, this.tempo, this.renderer.aspect));
+                ({ outputs, feedback } = run(fallback, args.nowTime, this.tempo, this.renderer.aspect,
+                    this.renderer.mouse.x, this.renderer.mouse.y
+                ));
                 used = fallback;
             } catch (err) {
                 return [];
             }
         } else {
             try {
-                ({ outputs, feedback } = run(current, args.nowTime, this.tempo, this.renderer.aspect));
+                ({ outputs, feedback } = run(current, args.nowTime, this.tempo, this.renderer.aspect,
+                    this.renderer.mouse.x, this.renderer.mouse.y
+                ));
                 used = current;
                 this.errors.delete(args.zone);
             } catch (err) {
@@ -120,7 +124,9 @@ export class EstuaryAdapter {
                 const fallback = this.lastWorking.get(args.zone);
                 if (!fallback) return [];
                 try {
-                    ({ outputs, feedback } = run(fallback, args.nowTime, this.tempo, this.renderer.aspect));
+                    ({ outputs, feedback } = run(fallback, args.nowTime, this.tempo, this.renderer.aspect,
+                        this.renderer.mouse.x, this.renderer.mouse.y
+                    ));
                     used = fallback;
                 } catch (err2) {
                     return [];

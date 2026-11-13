@@ -17,7 +17,7 @@ import { expandEmojis } from "./emoji.js";
 export function compile(code) {
     return new Function(
         "group", "text", "bezier", "curve", "sCurve", "scurve", "rect", "ellipse", "circle", "img", "vid",
-        "fb", "time", "cps", "beat", "aspect",
+        "fb", "time", "cps", "beat", "aspect", "mousex", "mousey",
         "osc", "phasor", "tri", "saw", "sqr", "unipolar", "bipolar", "remap", "linlin", "xt",
         "seq", "swarm", "range",
         `"use strict";\n${code}`
@@ -32,7 +32,7 @@ function lift(fn) {
  * Runs compiled code with the given time, returning the outputs.
  * Called every frame.
  */
-export function run(compiled, time, tempo, aspect) {
+export function run(compiled, time, tempo, aspect, mousex, mousey) {
     const outputs = new Map();
     let feedback = 0;
 
@@ -49,7 +49,7 @@ export function run(compiled, time, tempo, aspect) {
     const bezier = (...args) => new BezierNode(dispatch, ...args);
     const curve = (x, y, bend) => new CurveNode(dispatch, x, y, bend);
     const sCurve = (x, y, bend) => new SCurveNode(dispatch, x, y, bend);
-    const rect = (x, y, w, h) => new RectNode(dispatch, x, y, w, h);
+    const rect = (w, h) => new RectNode(dispatch, w, h);
     const ellipse = (rx, ry, sa, ea) => new EllipseNode(dispatch, rx, ry, sa, ea);
     const circle = (r, sa, ea) => new EllipseNode(dispatch, r, r, sa, ea);
     const group = (...args) => new GroupNode(dispatch, ...args);
@@ -148,8 +148,7 @@ export function run(compiled, time, tempo, aspect) {
                 if (typeof copy[prop] !== "function") {
                     throw new Error(`swarm: "${prop}" is not a method on the node`);
                 }
-                const vals = Array.isArray(rawVals) ? rawVals : [rawVals];
-                const v = vals[i % vals.length];
+                const v = rawVals[i % rawVals.length];
                 const args = Array.isArray(v) ? v : [v];
                 copy[prop](...args);
             }
@@ -174,7 +173,8 @@ export function run(compiled, time, tempo, aspect) {
         return out;
     };
 
-    compiled(group, text, bezier, curve, sCurve, sCurve, rect, ellipse, circle, img, vid, fb, t, cps, beat, aspect, osc,
+    compiled(group, text, bezier, curve, sCurve, sCurve, rect, ellipse, circle, img, vid, fb, t, cps, beat, aspect,
+        mousex, mousey, osc,
         phasor, tri, saw, sqr, unipolar, bipolar, remap, linlin, xt, seq, swarm, range);
 
     return { outputs, feedback };

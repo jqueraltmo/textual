@@ -23,7 +23,6 @@ export class Node {
         this._fillColor = null;
         this._strokeColor = null;
         this._gradient = null;
-        this._gradient = null;
     }
 
     out(destination = "") {

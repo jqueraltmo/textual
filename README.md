@@ -731,6 +731,15 @@ swarm(rect(2,2).fill().fit(aspect/2), {color: ['red', 'orange'], move: [[-1,0],[
 circle().fit(unipolar(osc())).out();
 ```
 
+## Interactivity
+
+`mousex` and `mousey` can be used to get the mouse position at each frame. The position is normalized to the -1 to 1 range.
+
+```js
+circle().move(mousex,mousey).fit().out()
+rect().fill().color([unipolar(mousex),unipolar(mousey),0]).out()
+```
+
 ## Using Textual with Punctual
 
 In Estuary, use two cells: one for Punctual and one for Textual.

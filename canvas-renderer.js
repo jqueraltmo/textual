@@ -11,6 +11,13 @@ export class CanvasRenderer {
         this.ctx = canvas.getContext("2d");
         this.streams = new Map(); // name -> { canvas, ctx, stream, active }
         this.aspect = 1;
+        this.mouse = { x: 0, y: 0 };
+
+        this._onMouseMove = (e) => {
+            this.mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            this.mouse.y = 1 - (e.clientY / window.innerHeight) * 2;
+        };
+        window.addEventListener("mousemove", this._onMouseMove);
 
         this._onResize = () => this.resize();
         window.addEventListener("resize", this._onResize);
